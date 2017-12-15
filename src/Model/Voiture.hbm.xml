@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Voiture" table="voiture" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="immat" type="string">
+            <column name="immat" length="50" not-null="true" />
+        </property>
+        <property name="carteGris" type="string">
+            <column name="carte_gris" length="50" not-null="true" />
+        </property>
+        <property name="nbrPlace" type="int">
+            <column name="nbr_place" not-null="true" />
+        </property>
+        <property name="cat" type="string">
+            <column name="cat" length="50" not-null="true" />
+        </property>
+        <property name="climatise" type="string">
+            <column name="climatise" length="50" not-null="true" />
+        </property>
+        <property name="misCircu" type="date">
+            <column name="mis_circu" length="10" not-null="true" />
+        </property>
+        <property name="modele" type="string">
+            <column name="modele" length="50" not-null="true" />
+        </property>
+        <property name="chassis" type="string">
+            <column name="chassis" length="50" not-null="true" />
+        </property>
+        <property name="puissance" type="int">
+            <column name="puissance" not-null="true" />
+        </property>
+        <property name="couleur" type="string">
+            <column name="couleur" length="50" not-null="true" />
+        </property>
+        <property name="km" type="int">
+            <column name="km" not-null="true" />
+        </property>
+        <property name="etatVeh" type="int">
+            <column name="etat_veh" not-null="true" />
+        </property>
+        <set name="autres" table="autre" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Autre" />
+        </set>
+        <set name="filtreairs" table="filtreair" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Filtreair" />
+        </set>
+        <set name="filtrehuiles" table="filtrehuile" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Filtrehuile" />
+        </set>
+        <set name="assocontratvoitures" table="assocontratvoiture" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_voiture" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratvoiture" />
+        </set>
+        <set name="vidanges" table="vidange" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_voiture" not-null="true" />
+            </key>
+            <one-to-many class="Model.Vidange" />
+        </set>
+        <set name="assurances" table="assurance" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assurance" />
+        </set>
+        <set name="visites" table="visite" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_voit" not-null="true" />
+            </key>
+            <one-to-many class="Model.Visite" />
+        </set>
+        <set name="reservations" table="reservation" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Reservation" />
+        </set>
+        <set name="depensevoits" table="depensevoit" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_veh" not-null="true" />
+            </key>
+            <one-to-many class="Model.Depensevoit" />
+        </set>
+    </class>
+</hibernate-mapping>

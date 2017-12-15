@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Tva" table="tva" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="facture" class="Model.Facture" fetch="select">
+            <column name="id_fact" not-null="true" />
+        </many-to-one>
+        <property name="tva" type="int">
+            <column name="tva" not-null="true" />
+        </property>
+        <property name="timbre" type="int">
+            <column name="timbre" not-null="true" />
+        </property>
+        <property name="thtva" type="float">
+            <column name="thtva" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="puhtva" type="float">
+            <column name="puhtva" precision="12" scale="0" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

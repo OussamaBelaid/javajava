@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Paiment" table="paiment" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="gatanti" type="float">
+            <column name="gatanti" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="typeGatan" type="string">
+            <column name="type_gatan" length="50" not-null="true" />
+        </property>
+        <property name="pay" type="float">
+            <column name="pay" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="typePay" type="string">
+            <column name="type_pay" length="50" not-null="true" />
+        </property>
+        <property name="datePay" type="date">
+            <column name="date_pay" length="10" not-null="true" />
+        </property>
+        <property name="remarque" type="string">
+            <column name="remarque" length="50" not-null="true" />
+        </property>
+        <property name="etat" type="int">
+            <column name="etat" not-null="true" />
+        </property>
+        <set name="etapepays" table="etapepay" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_paiment" not-null="true" />
+            </key>
+            <one-to-many class="Model.Etapepay" />
+        </set>
+        <set name="assocontratpais" table="assocontratpai" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_pai" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratpai" />
+        </set>
+    </class>
+</hibernate-mapping>

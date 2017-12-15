@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Conducteur" table="conducteur" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="nompre" type="string">
+            <column name="nompre" length="50" not-null="true" />
+        </property>
+        <property name="npermis" type="long">
+            <column name="npermis" not-null="true" />
+        </property>
+        <property name="dateperm" type="date">
+            <column name="dateperm" length="10" not-null="true" />
+        </property>
+        <property name="permisDelivr" type="string">
+            <column name="permis_delivr" length="50" not-null="true" />
+        </property>
+        <property name="identite" type="long">
+            <column name="identite" not-null="true" />
+        </property>
+        <property name="type" type="string">
+            <column name="type" length="50" not-null="true" />
+        </property>
+        <property name="dateIdent" type="date">
+            <column name="date_ident" length="10" not-null="true" />
+        </property>
+        <property name="realisIdenti" type="string">
+            <column name="realis_identi" length="50" not-null="true" />
+        </property>
+        <property name="etat" type="int">
+            <column name="etat" not-null="true" />
+        </property>
+        <set name="assocontratconducteurs" table="assocontratconducteur" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_conducteur1" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratconducteur" />
+        </set>
+        <set name="assocontratconducteur2s" table="assocontratconducteur2" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_conducteur2" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratconducteur2" />
+        </set>
+    </class>
+</hibernate-mapping>

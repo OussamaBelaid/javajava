@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Contrat" table="contrat" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <property name="dateContrat" type="date">
+            <column name="date_contrat" length="10" not-null="true" />
+        </property>
+        <property name="dateDep" type="date">
+            <column name="date_dep" length="10" not-null="true" />
+        </property>
+        <property name="heureDep" type="time">
+            <column name="heure_dep" length="8" not-null="true" />
+        </property>
+        <property name="dateRet" type="date">
+            <column name="date_ret" length="10" not-null="true" />
+        </property>
+        <property name="heureRet" type="time">
+            <column name="heure_ret" length="8" not-null="true" />
+        </property>
+        <property name="lieuDep" type="string">
+            <column name="lieu_dep" length="50" not-null="true" />
+        </property>
+        <property name="lieuRetour" type="string">
+            <column name="lieu_retour" length="50" not-null="true" />
+        </property>
+        <property name="kmDep" type="int">
+            <column name="km_dep" not-null="true" />
+        </property>
+        <property name="kmRetour" type="int">
+            <column name="km_retour" not-null="true" />
+        </property>
+        <property name="etat" type="int">
+            <column name="etat" not-null="true" />
+        </property>
+        <set name="assocontratpais" table="assocontratpai" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratpai" />
+        </set>
+        <set name="assocontratvoitures" table="assocontratvoiture" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratvoiture" />
+        </set>
+        <set name="factures" table="facture" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Facture" />
+        </set>
+        <set name="assocontratconducteur2s" table="assocontratconducteur2" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratconducteur2" />
+        </set>
+        <set name="assocontratclients" table="assocontratclient" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratclient" />
+        </set>
+        <set name="assocontratfacts" table="assocontratfact" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratfact" />
+        </set>
+        <set name="assocontratconducteurs" table="assocontratconducteur" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratconducteur" />
+        </set>
+        <set name="assocontratsocies" table="assocontratsocie" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_contrat" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratsocie" />
+        </set>
+    </class>
+</hibernate-mapping>

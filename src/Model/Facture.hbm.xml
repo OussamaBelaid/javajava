@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated 13 d?c. 2017 11:10:09 by Hibernate Tools 4.3.1 -->
+<hibernate-mapping>
+    <class name="Model.Facture" table="facture" catalog="rent" optimistic-lock="version">
+        <id name="id" type="java.lang.Integer">
+            <column name="id" />
+            <generator class="identity" />
+        </id>
+        <many-to-one name="contrat" class="Model.Contrat" fetch="select">
+            <column name="id_contrat" not-null="true" />
+        </many-to-one>
+        <property name="numFact" type="int">
+            <column name="num_fact" not-null="true" />
+        </property>
+        <property name="design" type="string">
+            <column name="design" length="50" not-null="true" />
+        </property>
+        <property name="quantit" type="int">
+            <column name="quantit" not-null="true" />
+        </property>
+        <property name="dateCre" type="date">
+            <column name="date_cre" length="10" not-null="true" />
+        </property>
+        <property name="debit" type="float">
+            <column name="debit" precision="12" scale="0" not-null="true" />
+        </property>
+        <property name="etat" type="int">
+            <column name="etat" not-null="true" />
+        </property>
+        <set name="tvas" table="tva" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_fact" not-null="true" />
+            </key>
+            <one-to-many class="Model.Tva" />
+        </set>
+        <set name="assocontratfacts" table="assocontratfact" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="id_fact" not-null="true" />
+            </key>
+            <one-to-many class="Model.Assocontratfact" />
+        </set>
+    </class>
+</hibernate-mapping>
