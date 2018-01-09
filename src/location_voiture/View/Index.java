@@ -13,8 +13,14 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
@@ -52,6 +58,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -59,6 +66,7 @@ import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
+import javax.swing.text.JTextComponent;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -66,6 +74,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import static org.hibernate.criterion.Restrictions.not;
+import org.jdatepicker.JDateComponent;
 
 /**
  *
@@ -76,6 +85,20 @@ Impleoperation operation ;
 //private static final Session session = NewHibernateUtil.getSessionFactory().openSession();
 private static Session session = null ;
 private static Session sessions = null ;
+private static String typcon = "" ;
+private static Integer niden = null ;
+private static String lieuid = "";
+private static Date dtdel = null ;
+private static Date dtnai = null ;
+private static String np = "";
+private static Integer permco= null ;
+private static String lieperm = "";
+private static List<JTextField> str = new ArrayList<JTextField>() ;
+private static List<JTextField> num = new ArrayList<JTextField>() ;
+private static List<JTextField> strdate = new ArrayList<JTextField>() ;
+private static Integer id_clso = null ;
+
+
 Boolean check = null ;
     /**
      * Creates new form Index
@@ -111,9 +134,9 @@ autre_mod();
 autre_affi();
 list_societe();
 client_affi();
-contrat_model();
+//contrat_model();
 heure_dep();
-
+show_contrat();
         
  visite_show.getColumnModel().getColumn(0).setMinWidth(0);
    visite_show.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -177,8 +200,12 @@ heure_dep();
    
    sociefact_show.getColumnModel().getColumn(0).setMinWidth(0);
    sociefact_show.getColumnModel().getColumn(0).setMaxWidth(0);
-   sociefact_show.getColumnModel().getColumn(0).setWidth(0);          
-//maint_join.getTableHeader().setDefaultRenderer(new headercol());
+   sociefact_show.getColumnModel().getColumn(0).setWidth(0);  
+   
+ /*   show_contrat.getColumnModel().getColumn(0).setMinWidth(0);
+   show_contrat.getColumnModel().getColumn(0).setMaxWidth(0);
+   show_contrat.getColumnModel().getColumn(0).setWidth(0);  */
+
 autre_affi.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 assur_affich.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 affi_tech.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -186,6 +213,9 @@ vidan_affi.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 affi_air.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 huille_affi.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 soietcont_show.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+show_contrat.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+
+choose_contrat.setText("client");
         operation = new Impleoperation() ; 
     }
 public void combolist() {
@@ -632,12 +662,15 @@ public void vidan_affi() {
               session = NewHibernateUtil.getSessionFactory().openSession();
 
          Query qi =session.createQuery("select distinct m from Model m , Voiture v   where m.model in(select a.modele from Voiture a) and v.id not in (select a.voiture from Assocontratvoiture a)" );
+         
          List <Model> mod = qi.list();
-         contrat_model.removeAllItems();
-         contrat_model.addItem("");
+        // contrat_model.removeAllItems();
+         edit_contrat_model.removeAllItems();
+       //  contrat_model.addItem("");
+         edit_contrat_model.addItem("");
          for(Model mode:mod){
-             contrat_model.addItem(mode.getModel());
-           
+          //   contrat_model.addItem(mode.getModel());
+             edit_contrat_model.addItem(mode.getModel());
          }
         
          }
@@ -676,11 +709,142 @@ do {
  for (int i = 0; i < hours.size(); ++i) {
       heure_dep.addItem(hours.get(i));
     heure_fin.addItem(hours.get(i));
+    edit_heure_dep.addItem(hours.get(i));
+    edit_heure_fin.addItem(hours.get(i));
  }
         }
+  /**********************************************************************************verif champ*****************************************************************************************/       
+    public void keyactioncontrat () {
+         str.add(lieu_depart); str.add(lieu_retour) ; str.add(lieu_identite) ; str.add(nom_prenom) ; str.add(client_lieunaiss) ; str.add(client_adresse) ;
+         str.add(client_nationalite) ;  str.add(identite_lieu) ;  str.add(prenom_nom) ; str.add(lieu_permis) ; str.add(identite_num); str.add(num_identite);
+         
+         num.add(km_dep); num.add(tel_client); num.add(montant_gatan); num.add(montant_pay); num.add(montant_pay);
+             for(int i =0 ; i<str.size() ; i++){
+        
+                 str.get(i).addKeyListener(new KeyListener() {
+                     
+                    
+                     @Override
+                     public void keyPressed(KeyEvent ke) {
+                       char mot = ke.getKeyChar();
+                     }
+
+                     @Override
+                     public void keyTyped(KeyEvent ke) {
+                        
+                     }
+
+                     @Override
+                     public void keyReleased(KeyEvent ke) {
+                 
+                     }
+
+                    
+                 
+             });
+             
+        
+             }
+             
+             
+             for(int j =0 ; j<num.size() ; j++){
+        
+                 num.get(j).addKeyListener(new KeyListener() {
+                     
+                    
+                     @Override
+                     public void keyPressed(KeyEvent e) {
+                        Integer mot = e.getKeyCode();
+                     }
+
+                     @Override
+                     public void keyTyped(KeyEvent e) {
+                       
+                     }
+
+                     @Override
+                     public void keyReleased(KeyEvent e) {
+                 
+                     }
+
+                    
+                 
+             });
+             
+        
+             }
+    }     
+
+               public void validationForName(char comp)
+{
+    
+   /*String text=comp.getText().trim();
+  if(comp.matches("^[a-z,A-Z]+"))
+   {
       
+   }
+   else
+   {
+    JOptionPane.showMessageDialog(null,"insérer un lieu valide");
+   }*/
+   
+}
+ public void show_contrat() {
+        sessions = NewHibernateUtil.getSessionFactory().openSession();
+           
 
          
+         
+          Query query_voit =sessions.createQuery("select  c.id ,c.dateContrat ,cl.nomprenom ,cl.tel , voi.modele , voi.immat ,c.dateDep , c.heureDep , c.dateRet , c.heureRet  from Contrat as  c  , Voiture as voi , Client as cl  where (c.id in (select v.contrat from c.assocontratvoitures as v) and voi.id in (select k.voiture from c.assocontratvoitures as k)) and (c.id in (select s.contrat from c.assocontratclients as s) and cl.id in (select p.client from c.assocontratclients as p))" );
+        
+          
+          
+         List <Object> voitu = query_voit.list();
+    
+         DefaultTableModel tables = (DefaultTableModel) show_contrat.getModel();
+         tables.setRowCount(0);
+          Boolean a = null ;
+         Boolean check = null ;
+       
+        
+     for(int i =0 ; i< voitu.size() ; i++){
+    
+       
+             Object[] objvoit = new Object [] {((Object[]) voitu.get(i))[0] ,((Object[]) voitu.get(i))[1],((Object[]) voitu.get(i))[2],((Object[]) voitu.get(i))[3],((Object[]) voitu.get(i))[4],((Object[]) voitu.get(i))[5],((Object[]) voitu.get(i))[6],((Object[]) voitu.get(i))[7] ,((Object[]) voitu.get(i))[8],((Object[]) voitu.get(i))[9]};
+             tables.addRow(objvoit);
+      }
+    }
+
+   public void show_contratsociete() {
+        sessions = NewHibernateUtil.getSessionFactory().openSession();
+           
+
+         
+          
+        Query query_voit =sessions.createQuery("select  c.id ,c.dateContrat ,cl.nom ,cl.tel , voi.modele , voi.immat ,c.dateDep , c.heureDep , c.dateRet , c.heureRet , cl.id    from Contrat as  c  , Voiture as voi , Societe as cl  where (c.id in (select v.contrat from c.assocontratvoitures as v) and voi.id in (select k.voiture from c.assocontratvoitures as k)) and (c.id in (select s.contrat from c.assocontratsocies as s) and cl.id in (select p.societe from c.assocontratsocies as p))" );
+   
+
+         
+          
+          
+         List <Object> voitu = query_voit.list();
+    
+         DefaultTableModel tables = (DefaultTableModel) show_contrat.getModel();
+         tables.setRowCount(0);
+          Boolean a = null ;
+         Boolean check = null ;
+       
+        
+     for(int i =0 ; i< voitu.size() ; i++){
+    
+       
+             Object[] objvoit = new Object [] {((Object[]) voitu.get(i))[0] ,((Object[]) voitu.get(i))[1],((Object[]) voitu.get(i))[2],((Object[]) voitu.get(i))[3],((Object[]) voitu.get(i))[4],((Object[]) voitu.get(i))[5],((Object[]) voitu.get(i))[6],((Object[]) voitu.get(i))[7] ,((Object[]) voitu.get(i))[8],((Object[]) voitu.get(i))[9] };
+             tables.addRow(objvoit);
+      }
+    }
+   
+   
+   
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -709,7 +873,7 @@ do {
         date_permis2 = new javax.swing.JTextField();
         jLabel249 = new javax.swing.JLabel();
         lieu_permis2 = new javax.swing.JTextField();
-        jButton7 = new javax.swing.JButton();
+        cond2_but = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         Container = new javax.swing.JPanel();
         Menu = new javax.swing.JPanel();
@@ -916,9 +1080,16 @@ do {
         autre_remarq = new javax.swing.JTextArea();
         list_contrat = new javax.swing.JPanel();
         jScrollPane9 = new javax.swing.JScrollPane();
-        jTable9 = new javax.swing.JTable();
+        show_contrat = new javax.swing.JTable();
         jLabel56 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
         jLabel57 = new javax.swing.JLabel();
+        jLabel209 = new javax.swing.JLabel();
+        jLabel220 = new javax.swing.JLabel();
+        jLabel237 = new javax.swing.JLabel();
+        jLabel236 = new javax.swing.JLabel();
+        choose_contrat = new javax.swing.JTextField();
         add_contrat = new javax.swing.JPanel();
         jSeparator1 = new javax.swing.JSeparator();
         jLabel58 = new javax.swing.JLabel();
@@ -1002,7 +1173,6 @@ do {
         contrat_retour = new com.toedter.calendar.JDateChooser();
         heure_fin = new javax.swing.JComboBox<>();
         heure_dep = new javax.swing.JComboBox<>();
-        jDateChooser2 = new com.toedter.calendar.JDateChooser();
         pai_day = new com.toedter.calendar.JDateChooser();
         id_cond1 = new javax.swing.JTextField();
         id_cond2 = new javax.swing.JTextField();
@@ -1412,6 +1582,111 @@ do {
         modif_client = new javax.swing.JButton();
         id_modif = new javax.swing.JTextField();
         Internal = new javax.swing.JPanel();
+        edit_contrat = new javax.swing.JPanel();
+        jLabel238 = new javax.swing.JLabel();
+        edit_date_contrat = new javax.swing.JTextField();
+        jLabel239 = new javax.swing.JLabel();
+        jLabel240 = new javax.swing.JLabel();
+        jLabel241 = new javax.swing.JLabel();
+        edit_contrat_retour = new com.toedter.calendar.JDateChooser();
+        edit_contrat_deb = new com.toedter.calendar.JDateChooser();
+        jLabel250 = new javax.swing.JLabel();
+        jLabel251 = new javax.swing.JLabel();
+        edit_heure_fin = new javax.swing.JComboBox<>();
+        edit_heure_dep = new javax.swing.JComboBox<>();
+        edit_contrat_imma = new javax.swing.JComboBox<>();
+        jLabel252 = new javax.swing.JLabel();
+        edit_contrat_model = new javax.swing.JComboBox<>();
+        jLabel253 = new javax.swing.JLabel();
+        jLabel254 = new javax.swing.JLabel();
+        jLabel255 = new javax.swing.JLabel();
+        edit_km_dep = new javax.swing.JTextField();
+        edit_lieu_depart = new javax.swing.JTextField();
+        jLabel256 = new javax.swing.JLabel();
+        jLabel257 = new javax.swing.JLabel();
+        edit_km_retour = new javax.swing.JTextField();
+        edit_lieu_retour = new javax.swing.JTextField();
+        jLabel258 = new javax.swing.JLabel();
+        edit_type_iden = new javax.swing.JComboBox<>();
+        jLabel259 = new javax.swing.JLabel();
+        edit_num_identite = new javax.swing.JTextField();
+        jLabel260 = new javax.swing.JLabel();
+        edit_identite_date = new javax.swing.JTextField();
+        jLabel261 = new javax.swing.JLabel();
+        edit_lieu_identite = new javax.swing.JTextField();
+        jLabel262 = new javax.swing.JLabel();
+        edit_nom_prenom = new javax.swing.JTextField();
+        jLabel263 = new javax.swing.JLabel();
+        edit_tel_client = new javax.swing.JTextField();
+        jLabel264 = new javax.swing.JLabel();
+        edit_client_naissance = new javax.swing.JTextField();
+        jLabel265 = new javax.swing.JLabel();
+        edit_lieu_naiss = new javax.swing.JTextField();
+        jLabel266 = new javax.swing.JLabel();
+        edit_client_nationalite = new javax.swing.JTextField();
+        jLabel267 = new javax.swing.JLabel();
+        edit_client_adresse = new javax.swing.JTextField();
+        jLabel268 = new javax.swing.JLabel();
+        jLabel269 = new javax.swing.JLabel();
+        jLabel270 = new javax.swing.JLabel();
+        jLabel271 = new javax.swing.JLabel();
+        edit_pai_day = new com.toedter.calendar.JDateChooser();
+        edit_montant_pay = new javax.swing.JTextField();
+        edit_montant_gatan = new javax.swing.JTextField();
+        edit_pay_gatan = new javax.swing.JComboBox<>();
+        edit_type_pay = new javax.swing.JComboBox<>();
+        jLabel272 = new javax.swing.JLabel();
+        jScrollPane35 = new javax.swing.JScrollPane();
+        edit_observation = new javax.swing.JTextArea();
+        jLabel273 = new javax.swing.JLabel();
+        edit_type_identite_conduc = new javax.swing.JComboBox<>();
+        jLabel274 = new javax.swing.JLabel();
+        edit_identite_num_conduc = new javax.swing.JTextField();
+        jLabel275 = new javax.swing.JLabel();
+        edit_date_identite_conduc = new javax.swing.JTextField();
+        jLabel276 = new javax.swing.JLabel();
+        edit_identite_lieu_conduc = new javax.swing.JTextField();
+        jLabel277 = new javax.swing.JLabel();
+        edit_prenom_nom_conduc = new javax.swing.JTextField();
+        jLabel278 = new javax.swing.JLabel();
+        edit_date_permis_conduc = new javax.swing.JTextField();
+        jLabel279 = new javax.swing.JLabel();
+        edit_conducteur_permis = new javax.swing.JTextField();
+        jLabel280 = new javax.swing.JLabel();
+        edit_lieu_permis_conduc = new javax.swing.JTextField();
+        jLabel281 = new javax.swing.JLabel();
+        edit_type_identite_conduc2 = new javax.swing.JComboBox<>();
+        jLabel282 = new javax.swing.JLabel();
+        edit_identite_num_conduc2 = new javax.swing.JTextField();
+        jLabel283 = new javax.swing.JLabel();
+        edit_date_identite_conduc2 = new javax.swing.JTextField();
+        jLabel284 = new javax.swing.JLabel();
+        edit_identite_lieu_conduc2 = new javax.swing.JTextField();
+        jLabel285 = new javax.swing.JLabel();
+        edit_prenom_nom_conduc2 = new javax.swing.JTextField();
+        jLabel286 = new javax.swing.JLabel();
+        edit_conducteur_permis_conduc2 = new javax.swing.JTextField();
+        jLabel287 = new javax.swing.JLabel();
+        edit_lieu_permis_conduc2 = new javax.swing.JTextField();
+        jLabel288 = new javax.swing.JLabel();
+        edit_date_permis_conduc2 = new javax.swing.JTextField();
+        jLabel289 = new javax.swing.JLabel();
+        edit_retour_causs = new javax.swing.JTextField();
+        edit_contrat_butt = new javax.swing.JButton();
+        jSeparator39 = new javax.swing.JSeparator();
+        jSeparator40 = new javax.swing.JSeparator();
+        jSeparator41 = new javax.swing.JSeparator();
+        jSeparator42 = new javax.swing.JSeparator();
+        edit_type_contrat = new javax.swing.JTextField();
+        edit_id_contrat = new javax.swing.JTextField();
+        jSeparator43 = new javax.swing.JSeparator();
+        id_veh = new javax.swing.JTextField();
+        id_cliso = new javax.swing.JTextField();
+        id_pai = new javax.swing.JTextField();
+        edit_id_conduc1 = new javax.swing.JTextField();
+        edit_id_conduc2 = new javax.swing.JTextField();
+        delete_cond2 = new javax.swing.JButton();
+        check_del = new javax.swing.JTextField();
 
         jButton1.setText("Visite technique");
         jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -1439,6 +1714,12 @@ do {
         jLabel243.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel243.setText("N° : ");
         jdialog_contrat.getContentPane().add(jLabel243, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 90, -1, 30));
+
+        identite_num2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                identite_num2ActionPerformed(evt);
+            }
+        });
         jdialog_contrat.getContentPane().add(identite_num2, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 90, 110, 30));
 
         jLabel244.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -1471,10 +1752,20 @@ do {
         jdialog_contrat.getContentPane().add(jLabel249, new org.netbeans.lib.awtextra.AbsoluteConstraints(140, 230, -1, 30));
         jdialog_contrat.getContentPane().add(lieu_permis2, new org.netbeans.lib.awtextra.AbsoluteConstraints(170, 240, 160, 30));
 
-        jButton7.setText("Valider");
-        jdialog_contrat.getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 330, -1, -1));
+        cond2_but.setText("Valider");
+        cond2_but.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                cond2_butMouseClicked(evt);
+            }
+        });
+        jdialog_contrat.getContentPane().add(cond2_but, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 330, -1, -1));
 
         jButton8.setText("Annuler");
+        jButton8.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton8MouseClicked(evt);
+            }
+        });
         jdialog_contrat.getContentPane().add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 330, -1, -1));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -2955,30 +3246,94 @@ do {
         list_contrat.setBackground(new java.awt.Color(255, 255, 255));
         list_contrat.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable9.setModel(new javax.swing.table.DefaultTableModel(
+        show_contrat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "D.contrat", "Client", "Tél", "Modele", "Imma", "D.départ", "Heure", "D.retour", "Heure", "Action"
+                "id", "D.contrat", "Client", "Tél", "Modele", "Imma", "D.départ", "Heure", "D.retour", "Heure"
             }
-        ));
-        jTable9.setGridColor(new java.awt.Color(0, 0, 255));
-        jScrollPane9.setViewportView(jTable9);
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        show_contrat.setGridColor(new java.awt.Color(0, 0, 255));
+        jScrollPane9.setViewportView(show_contrat);
+        if (show_contrat.getColumnModel().getColumnCount() > 0) {
+            show_contrat.getColumnModel().getColumn(0).setResizable(false);
+            show_contrat.getColumnModel().getColumn(1).setResizable(false);
+            show_contrat.getColumnModel().getColumn(2).setResizable(false);
+            show_contrat.getColumnModel().getColumn(3).setResizable(false);
+            show_contrat.getColumnModel().getColumn(4).setResizable(false);
+            show_contrat.getColumnModel().getColumn(5).setResizable(false);
+            show_contrat.getColumnModel().getColumn(6).setResizable(false);
+            show_contrat.getColumnModel().getColumn(7).setResizable(false);
+            show_contrat.getColumnModel().getColumn(8).setResizable(false);
+            show_contrat.getColumnModel().getColumn(9).setResizable(false);
+        }
 
         list_contrat.add(jScrollPane9, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 120, 1170, 520));
 
         jLabel56.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
-        jLabel56.setText("Imprimer");
-        list_contrat.add(jLabel56, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 30, 80, 40));
+        jLabel56.setForeground(new java.awt.Color(0, 102, 204));
+        jLabel56.setText("Liste Contrats");
+        list_contrat.add(jLabel56, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 120, 40));
 
-        jLabel57.setOpaque(true);
-        jLabel57.setBackground(new java.awt.Color(153, 153, 153));
-        jLabel57.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jLabel57.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel57.setText("Voiture");
-        jLabel57.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        list_contrat.add(jLabel57, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 80, 230, 40));
+        jButton4.setText("Contrat Societé");
+        jButton4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton4MouseClicked(evt);
+            }
+        });
+        list_contrat.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 40, -1, 40));
+
+        jButton6.setText("Contrat Client");
+        jButton6.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton6MouseClicked(evt);
+            }
+        });
+        list_contrat.add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(370, 40, -1, 40));
+
+        jLabel57.setText(":");
+        list_contrat.add(jLabel57, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 10, 30, 40));
+        jLabel57.setVisible(false);
+
+        jLabel209.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Photo/Tableicon/icons8_Edit_File_30px.png"))); // NOI18N
+        jLabel209.setText("Edit");
+        jLabel209.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel209.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        jLabel209.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel209MouseClicked(evt);
+            }
+        });
+        list_contrat.add(jLabel209, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 60, -1, -1));
+
+        jLabel220.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Photo/Tableicon/icons8_Delete_File_30px.png"))); // NOI18N
+        jLabel220.setText("Delete");
+        jLabel220.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel220.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        list_contrat.add(jLabel220, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 60, -1, -1));
+
+        jLabel237.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Photo/Tableicon/icons8_Stack_of_Money_30px.png"))); // NOI18N
+        jLabel237.setText("Factiration");
+        jLabel237.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel237.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        list_contrat.add(jLabel237, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 60, -1, -1));
+
+        jLabel236.setIcon(new javax.swing.ImageIcon(getClass().getResource("/Photo/Tableicon/icons8_Archive_30px.png"))); // NOI18N
+        jLabel236.setText("Archive");
+        jLabel236.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        jLabel236.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        list_contrat.add(jLabel236, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 60, -1, -1));
+        list_contrat.add(choose_contrat, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 10, 70, -1));
+        choose_contrat.setVisible(false);
 
         affichage.add(list_contrat, "list_contrat");
 
@@ -3002,6 +3357,11 @@ do {
         jLabel61.setText("Heure : ");
         add_contrat.add(jLabel61, new org.netbeans.lib.awtextra.AbsoluteConstraints(360, 120, 50, 30));
 
+        contrat_model.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                contrat_modelMouseClicked(evt);
+            }
+        });
         contrat_model.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 contrat_modelActionPerformed(evt);
@@ -3020,6 +3380,12 @@ do {
         jLabel64.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel64.setText("Lieu de départ : ");
         add_contrat.add(jLabel64, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 220, 100, -1));
+
+        lieu_depart.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                lieu_departKeyPressed(evt);
+            }
+        });
         add_contrat.add(lieu_depart, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 220, 140, 30));
 
         jLabel65.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
@@ -3100,7 +3466,7 @@ do {
         jLabel75.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel75.setText("a : ");
         add_contrat.add(jLabel75, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 90, 30, 30));
-        add_contrat.add(lieu_identite, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 90, 120, 30));
+        add_contrat.add(lieu_identite, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 90, 120, 30));
 
         jLabel76.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
         jLabel76.setText("Nom prénom/societé :");
@@ -3133,6 +3499,11 @@ do {
         add_contrat.add(client_adresse, new org.netbeans.lib.awtextra.AbsoluteConstraints(990, 230, 160, 30));
 
         copier.setText("copier");
+        copier.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                copierMouseClicked(evt);
+            }
+        });
         add_contrat.add(copier, new org.netbeans.lib.awtextra.AbsoluteConstraints(1100, 280, -1, -1));
         add_contrat.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 310, 590, 10));
         add_contrat.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 40, 590, 10));
@@ -3234,7 +3605,6 @@ do {
         add_contrat.add(heure_fin, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 120, 100, 30));
 
         add_contrat.add(heure_dep, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 70, 100, 30));
-        add_contrat.add(jDateChooser2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1110, 90, -1, -1));
         add_contrat.add(pai_day, new org.netbeans.lib.awtextra.AbsoluteConstraints(207, 450, 120, -1));
         add_contrat.add(id_cond1, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 10, 40, -1));
         id_cond1.setVisible(false);
@@ -5096,6 +5466,337 @@ do {
 
         Internal.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
         affichage.add(Internal, "card42");
+
+        edit_contrat.setBackground(new java.awt.Color(255, 255, 255));
+        edit_contrat.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+
+        jLabel238.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel238.setText("Date de contrat :");
+        edit_contrat.add(jLabel238, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 10, 110, 30));
+
+        edit_date_contrat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_date_contratActionPerformed(evt);
+            }
+        });
+        edit_contrat.add(edit_date_contrat, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 10, 170, 30));
+
+        jLabel239.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel239.setForeground(new java.awt.Color(0, 51, 255));
+        jLabel239.setText("Véhicule");
+        edit_contrat.add(jLabel239, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 34, 50, 30));
+
+        jLabel240.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel240.setText("Date départ : ");
+        edit_contrat.add(jLabel240, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 70, 90, -1));
+
+        jLabel241.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel241.setText("Date retour : ");
+        edit_contrat.add(jLabel241, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 120, 90, -1));
+        edit_contrat.add(edit_contrat_retour, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 120, 130, -1));
+        edit_contrat.add(edit_contrat_deb, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 70, 130, -1));
+
+        jLabel250.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel250.setText("Heure : ");
+        edit_contrat.add(jLabel250, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 60, 50, 30));
+
+        jLabel251.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel251.setText("Heure : ");
+        edit_contrat.add(jLabel251, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 110, 50, 30));
+
+        edit_contrat.add(edit_heure_fin, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 110, 100, 30));
+
+        edit_contrat.add(edit_heure_dep, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 60, 100, 30));
+
+        edit_contrat.add(edit_contrat_imma, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 60, 140, 30));
+
+        jLabel252.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel252.setText("Immatriculation : ");
+        edit_contrat.add(jLabel252, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 70, 110, -1));
+
+        edit_contrat_model.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                edit_contrat_modelMouseClicked(evt);
+            }
+        });
+        edit_contrat_model.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_contrat_modelActionPerformed(evt);
+            }
+        });
+        edit_contrat.add(edit_contrat_model, new org.netbeans.lib.awtextra.AbsoluteConstraints(470, 60, 140, 30));
+
+        jLabel253.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel253.setText("Modèle : ");
+        edit_contrat.add(jLabel253, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 70, 60, -1));
+
+        jLabel254.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel254.setText("Lieu de départ : ");
+        edit_contrat.add(jLabel254, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 67, 100, 20));
+
+        jLabel255.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel255.setText("KM de départ : ");
+        edit_contrat.add(jLabel255, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 120, 100, -1));
+        edit_contrat.add(edit_km_dep, new org.netbeans.lib.awtextra.AbsoluteConstraints(510, 110, 140, 30));
+
+        edit_lieu_depart.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                edit_lieu_departKeyPressed(evt);
+            }
+        });
+        edit_contrat.add(edit_lieu_depart, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 60, 150, 30));
+
+        jLabel256.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel256.setText("lieu de retour : ");
+        edit_contrat.add(jLabel256, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 120, 100, -1));
+
+        jLabel257.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel257.setText("KM de retour : ");
+        edit_contrat.add(jLabel257, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 120, 100, -1));
+        edit_contrat.add(edit_km_retour, new org.netbeans.lib.awtextra.AbsoluteConstraints(750, 110, 150, 30));
+        edit_contrat.add(edit_lieu_retour, new org.netbeans.lib.awtextra.AbsoluteConstraints(1010, 110, 150, 30));
+
+        jLabel258.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel258.setForeground(new java.awt.Color(0, 51, 255));
+        jLabel258.setText("Locateur/Client");
+        edit_contrat.add(jLabel258, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 270, 160, 20));
+
+        edit_type_iden.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CIN", "Passport", " " }));
+        edit_contrat.add(edit_type_iden, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 300, 70, 30));
+
+        jLabel259.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel259.setText("N° : ");
+        edit_contrat.add(jLabel259, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 300, -1, 30));
+
+        edit_num_identite.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_num_identiteActionPerformed(evt);
+            }
+        });
+        edit_contrat.add(edit_num_identite, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 300, 110, 30));
+
+        jLabel260.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel260.setText("date : ");
+        edit_contrat.add(jLabel260, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 300, -1, 30));
+        edit_contrat.add(edit_identite_date, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 300, 110, 30));
+
+        jLabel261.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel261.setText("a : ");
+        edit_contrat.add(jLabel261, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 300, 30, 30));
+        edit_contrat.add(edit_lieu_identite, new org.netbeans.lib.awtextra.AbsoluteConstraints(440, 300, 120, 30));
+
+        jLabel262.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel262.setText("Nom prénom/societé :");
+        edit_contrat.add(jLabel262, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 300, -1, 30));
+        edit_contrat.add(edit_nom_prenom, new org.netbeans.lib.awtextra.AbsoluteConstraints(730, 300, 160, 30));
+
+        jLabel263.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel263.setText("tel:");
+        edit_contrat.add(jLabel263, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 300, 20, 30));
+        edit_contrat.add(edit_tel_client, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 300, 160, 30));
+
+        jLabel264.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel264.setText("Date naissance:");
+        edit_contrat.add(jLabel264, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 350, -1, 30));
+        edit_contrat.add(edit_client_naissance, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 350, 160, 30));
+
+        jLabel265.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel265.setText("Lieu naissance:");
+        edit_contrat.add(jLabel265, new org.netbeans.lib.awtextra.AbsoluteConstraints(290, 350, -1, 30));
+        edit_contrat.add(edit_lieu_naiss, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 350, 160, 30));
+
+        jLabel266.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel266.setText("nationalité :");
+        edit_contrat.add(jLabel266, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 350, -1, 30));
+        edit_contrat.add(edit_client_nationalite, new org.netbeans.lib.awtextra.AbsoluteConstraints(660, 350, 160, 30));
+
+        jLabel267.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel267.setText("Adresse:");
+        edit_contrat.add(jLabel267, new org.netbeans.lib.awtextra.AbsoluteConstraints(840, 350, -1, 30));
+        edit_contrat.add(edit_client_adresse, new org.netbeans.lib.awtextra.AbsoluteConstraints(910, 350, 160, 30));
+
+        jLabel268.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel268.setForeground(new java.awt.Color(0, 51, 255));
+        jLabel268.setText("Paiement");
+        edit_contrat.add(jLabel268, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 150, 90, 20));
+
+        jLabel269.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel269.setText("Montant de la gatantie déposée :");
+        edit_contrat.add(jLabel269, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 180, 200, -1));
+
+        jLabel270.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel270.setText("Montant de paiement:");
+        edit_contrat.add(jLabel270, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 230, 200, -1));
+
+        jLabel271.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel271.setText("Date de paiement:");
+        edit_contrat.add(jLabel271, new org.netbeans.lib.awtextra.AbsoluteConstraints(410, 180, 120, -1));
+        edit_contrat.add(edit_pai_day, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 180, 120, -1));
+        edit_contrat.add(edit_montant_pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 230, 90, 30));
+        edit_contrat.add(edit_montant_gatan, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 180, 90, 30));
+
+        edit_pay_gatan.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ESP", "cart bleu", "chèque" }));
+        edit_contrat.add(edit_pay_gatan, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 180, -1, -1));
+
+        edit_type_pay.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "ESP", "cart bleu", "chèque" }));
+        edit_contrat.add(edit_type_pay, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 230, -1, -1));
+
+        jLabel272.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel272.setText("Observation:");
+        edit_contrat.add(jLabel272, new org.netbeans.lib.awtextra.AbsoluteConstraints(690, 170, 90, 40));
+
+        edit_observation.setColumns(20);
+        edit_observation.setRows(5);
+        jScrollPane35.setViewportView(edit_observation);
+
+        edit_contrat.add(jScrollPane35, new org.netbeans.lib.awtextra.AbsoluteConstraints(800, 180, -1, 70));
+
+        jLabel273.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel273.setForeground(new java.awt.Color(0, 51, 255));
+        jLabel273.setText("Conducteur");
+        edit_contrat.add(jLabel273, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 390, 90, 20));
+
+        edit_type_identite_conduc.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CIN", "Passport", " " }));
+        edit_contrat.add(edit_type_identite_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 420, 70, 30));
+
+        jLabel274.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel274.setText("N° : ");
+        edit_contrat.add(jLabel274, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 420, -1, 30));
+
+        edit_identite_num_conduc.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_identite_num_conducActionPerformed(evt);
+            }
+        });
+        edit_contrat.add(edit_identite_num_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 420, 110, 30));
+
+        jLabel275.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel275.setText("date : ");
+        edit_contrat.add(jLabel275, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 420, -1, 30));
+        edit_contrat.add(edit_date_identite_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 420, 110, 30));
+
+        jLabel276.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel276.setText("a : ");
+        edit_contrat.add(jLabel276, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 420, 30, 30));
+        edit_contrat.add(edit_identite_lieu_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 420, 120, 30));
+
+        jLabel277.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel277.setText("Nom prénom/societé :");
+        edit_contrat.add(jLabel277, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 420, -1, 30));
+        edit_contrat.add(edit_prenom_nom_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 420, 160, 30));
+
+        jLabel278.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel278.setText("Date:");
+        edit_contrat.add(jLabel278, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 460, -1, 30));
+        edit_contrat.add(edit_date_permis_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 460, 160, 30));
+
+        jLabel279.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel279.setText("N° permis conduire:");
+        edit_contrat.add(jLabel279, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 420, -1, 30));
+        edit_contrat.add(edit_conducteur_permis, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 420, 160, 30));
+
+        jLabel280.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel280.setText("à :");
+        edit_contrat.add(jLabel280, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 460, -1, 30));
+        edit_contrat.add(edit_lieu_permis_conduc, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 460, 160, 30));
+
+        jLabel281.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel281.setForeground(new java.awt.Color(0, 51, 255));
+        jLabel281.setText("Conducteur 2");
+        edit_contrat.add(jLabel281, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 510, 90, 20));
+
+        edit_type_identite_conduc2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "CIN", "Passport", " " }));
+        edit_contrat.add(edit_type_identite_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 540, 70, 30));
+
+        jLabel282.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel282.setText("N° : ");
+        edit_contrat.add(jLabel282, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 540, -1, 30));
+
+        edit_identite_num_conduc2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                edit_identite_num_conduc2ActionPerformed(evt);
+            }
+        });
+        edit_contrat.add(edit_identite_num_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 540, 110, 30));
+
+        jLabel283.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel283.setText("date : ");
+        edit_contrat.add(jLabel283, new org.netbeans.lib.awtextra.AbsoluteConstraints(230, 540, -1, 30));
+        edit_contrat.add(edit_date_identite_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 540, 110, 30));
+
+        jLabel284.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel284.setText("a : ");
+        edit_contrat.add(jLabel284, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 540, 30, 30));
+        edit_contrat.add(edit_identite_lieu_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 540, 120, 30));
+
+        jLabel285.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel285.setText("Nom prénom/societé :");
+        edit_contrat.add(jLabel285, new org.netbeans.lib.awtextra.AbsoluteConstraints(550, 540, -1, 30));
+        edit_contrat.add(edit_prenom_nom_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 540, 160, 30));
+
+        jLabel286.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel286.setText("N° permis conduire:");
+        edit_contrat.add(jLabel286, new org.netbeans.lib.awtextra.AbsoluteConstraints(870, 540, -1, 30));
+        edit_contrat.add(edit_conducteur_permis_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1000, 540, 160, 30));
+
+        jLabel287.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel287.setText("à :");
+        edit_contrat.add(jLabel287, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 580, -1, 30));
+        edit_contrat.add(edit_lieu_permis_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 580, 160, 30));
+
+        jLabel288.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel288.setText("Date:");
+        edit_contrat.add(jLabel288, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 580, -1, 30));
+        edit_contrat.add(edit_date_permis_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(250, 580, 160, 30));
+
+        jLabel289.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel289.setText("Retour de cautionnement");
+        edit_contrat.add(jLabel289, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 230, 160, -1));
+        edit_contrat.add(edit_retour_causs, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 220, 130, 30));
+
+        edit_contrat_butt.setText("Valider");
+        edit_contrat_butt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                edit_contrat_buttMouseClicked(evt);
+            }
+        });
+        edit_contrat.add(edit_contrat_butt, new org.netbeans.lib.awtextra.AbsoluteConstraints(920, 620, 250, 30));
+
+        jSeparator39.setBackground(new java.awt.Color(0, 51, 153));
+        edit_contrat.add(jSeparator39, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 520, 1080, 10));
+
+        jSeparator40.setBackground(new java.awt.Color(0, 51, 153));
+        edit_contrat.add(jSeparator40, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 52, 1110, 10));
+
+        jSeparator41.setBackground(new java.awt.Color(0, 51, 204));
+        edit_contrat.add(jSeparator41, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 160, 1110, 10));
+
+        jSeparator42.setBackground(new java.awt.Color(0, 102, 204));
+        edit_contrat.add(jSeparator42, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 400, 1090, 10));
+        edit_contrat.add(edit_type_contrat, new org.netbeans.lib.awtextra.AbsoluteConstraints(580, 10, 70, -1));
+        edit_type_contrat.setVisible(false);
+        edit_contrat.add(edit_id_contrat, new org.netbeans.lib.awtextra.AbsoluteConstraints(680, 10, 50, -1));
+        edit_id_contrat.setVisible(false);
+
+        jSeparator43.setBackground(new java.awt.Color(0, 51, 204));
+        edit_contrat.add(jSeparator43, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 280, 1070, 10));
+        edit_contrat.add(id_veh, new org.netbeans.lib.awtextra.AbsoluteConstraints(760, 10, -1, -1));
+        id_veh.setVisible(false);
+        edit_contrat.add(id_cliso, new org.netbeans.lib.awtextra.AbsoluteConstraints(830, 10, -1, -1));
+        id_cliso.setVisible(false);
+        edit_contrat.add(id_pai, new org.netbeans.lib.awtextra.AbsoluteConstraints(900, 10, -1, -1));
+        id_pai.setVisible(false);
+        edit_contrat.add(edit_id_conduc1, new org.netbeans.lib.awtextra.AbsoluteConstraints(970, 10, -1, -1));
+        edit_id_conduc1.setVisible(false);
+        edit_contrat.add(edit_id_conduc2, new org.netbeans.lib.awtextra.AbsoluteConstraints(1040, 10, -1, -1));
+        edit_id_conduc2.setVisible(false);
+
+        delete_cond2.setText("Supprimé conducteur 2");
+        edit_contrat.add(delete_cond2, new org.netbeans.lib.awtextra.AbsoluteConstraints(500, 600, 150, 30));
+        edit_contrat.add(check_del, new org.netbeans.lib.awtextra.AbsoluteConstraints(490, 10, -1, -1));
+        check_del.setVisible(false);
+
+        affichage.add(edit_contrat, "edit_contrat");
 
         Container.add(affichage, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 130, 1170, 650));
 
@@ -7164,14 +7865,19 @@ int i  = list_societe.getSelectedRow();
     }//GEN-LAST:event_modif_clientMouseClicked
 
     private void contrat_modelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_contrat_modelActionPerformed
-       contrat_imma.removeAllItems();
+      try {
+        contrat_imma.removeAllItems();
         String a = contrat_model.getSelectedItem().toString();
  // JOptionPane.showMessageDialog(null,a);
+ 
    session = NewHibernateUtil.getSessionFactory().openSession(); 
        Query query_table =session.createQuery("from Voiture v where v.modele=:imm" );
-             query_table.setParameter("imm",a); 
-             query_table.setFirstResult(0);
-              query_table.setMaxResults(1);
+   //  Query query_table =session.createQuery("select cv.voiture.modele  from Voiture as v , Contrat ctr , ctr.assocontratvoitures as cs , v.assocontratvoitures as cv  where v.id not in (select cv.voiture from  cv) or v.id  in (select cs.voiture  from  cs where (cs.contrat.dateDep not between :deb and :ret) and (cs.contrat.dateRet not between :deb and :ret)  ) " );
+            
+     query_table.setParameter("imm",a); 
+                
+           /*  query_table.setFirstResult(0);
+              query_table.setMaxResults(1);*/
               
               List<Voiture> voitu = query_table.list();
             
@@ -7183,6 +7889,11 @@ int i  = list_societe.getSelectedRow();
            
           }
         
+      }catch(Exception e){
+         contrat_model.getMouseListeners();
+      }
+         
+         
     }//GEN-LAST:event_contrat_modelActionPerformed
 
     private void conducteurtwoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_conducteurtwoMouseClicked
@@ -7217,12 +7928,7 @@ int i  = list_societe.getSelectedRow();
     catch(Exception e){
         
     }
-   
        
-             
-           
-           
-               
              if(societe.size()>0){
                 
                  for(Societe mods:societe){
@@ -7268,18 +7974,25 @@ int i  = list_societe.getSelectedRow();
              
     }//GEN-LAST:event_num_identiteActionPerformed
 
+    
+        
     private void saveMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_saveMouseClicked
+    
+        
+        
         Contrat contrat = new Contrat();
         Client client = new Client();
         Paiment pai = new Paiment();
         Voiture voiture = new Voiture();
         Conducteur cond1 = new Conducteur();
+         Conducteur cond2 = new Conducteur();
         Societe societe = new Societe();
         Assocontratvoiture aa = new Assocontratvoiture();
         Assocontratclient cliasso = new Assocontratclient();
          Assocontratpai clipaye = new Assocontratpai();
          Assocontratsocie asssocie = new Assocontratsocie();
          Assocontratconducteur assocond = new Assocontratconducteur();
+         Assocontratconducteur assocond2 = new Assocontratconducteur();
       try {   
          try {
          SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -7428,11 +8141,73 @@ operation.Addcontrat(contrat , aa);
  /*}catch(Exception e){
      JOptionPane.showMessageDialog(null,"not complete");
  }*/
+         if(niden != null && lieuid != "" && dtdel != null && dtnai != null && np != "" && permco != null){
+              if(id_cond2.getText().isEmpty() == false){
+             Integer verifcond = Integer.parseInt(id_cond2.getText());
+                cond2.setId(verifcond);
+                assocond2.setConducteur(cond2);
+                assocond2.setContrat(contrat);
+                operation.Addassocontratconducteur(cond2, assocond2);
+              }else {
+                  cond2.setType(typcon);
+                  cond2.setIdentite(niden);
+                cond2.setRealisIdenti(lieuid);
+                
+                cond2.setDateIdent(dtdel);
+                cond2.setDateperm(dtnai);
+            cond2.setNompre(np);
+            cond2.setNpermis(permco);
+            cond2.setPermisDelivr(lieperm);
+            cond2.setDateperm(dtdel);
+            assocond2.setConducteur(cond2);
+            assocond2.setContrat(contrat);
+            operation.Addassocontratconducteur(cond2, assocond2);
+            
+             
+         }
+         }
+ 
+         
+         
+         
+         
       } catch (HeadlessException | NumberFormatException e){
                 JOptionPane.showMessageDialog(null,"il faut que vous saisie tou les champ");
                }
-    }//GEN-LAST:event_saveMouseClicked
 
+
+lieu_depart.setText("");
+lieu_retour.setText("");
+km_dep.setText("");
+
+id_contrat.setText("");
+
+lieu_identite.setText("");
+nom_prenom.setText("");
+tel_client.setText("");
+client_lieunaiss.setText("");
+client_adresse.setText("");
+client_nationalite.setText("");
+
+montant_gatan.setText("");
+montant_pay.setText("");
+
+observation.setText("");
+id_cond1.setText("");
+
+identite_num.setText("");
+identite_lieu.setText("");
+date_identite.setText("");
+date_permis.setText("");
+conducteur_permis.setText("");
+prenom_nom.setText("");
+lieu_permis.setText("");
+
+ 
+
+      
+    }//GEN-LAST:event_saveMouseClicked
+/*conducteur 1 automatique get information*/
     private void identite_numActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identite_numActionPerformed
         Long conduc = Long.parseLong(identite_num.getText());
            
@@ -7465,6 +8240,805 @@ operation.Addcontrat(contrat , aa);
                  JOptionPane.showMessageDialog(null, id_cond1.getText());
            }
     }//GEN-LAST:event_identite_numActionPerformed
+/*Conducteur 2 automatique get information */
+    private void identite_num2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_identite_num2ActionPerformed
+        Long conduc = Long.parseLong(identite_num2.getText());
+           
+           List<Conducteur> cond = null ;
+           try {
+            Query query_condlist =session.createQuery("from Conducteur v where v.identite=:idcon " );
+             query_condlist.setParameter("idcon",conduc); 
+            cond = query_condlist.list();
+           }catch (Exception e){
+                   
+                   }
+           
+           if(cond.size()>0){
+                
+            for(Conducteur mode:cond){
+               prenom_nom2.setText(mode.getNompre());
+                       
+                        type_identite3.setSelectedItem(mode.getType());
+                        date_identite2.setText(mode.getDateIdent().toString());
+                        identite_lieu2.setText(mode.getRealisIdenti());
+                         date_permis2.setText(mode.getDateperm().toString());
+                        id_cond2.setText(Integer.toString(mode.getId()));
+                        conducteur_permis2.setText(Long.toString(mode.getNpermis()));
+                        lieu_permis2.setText(mode.getPermisDelivr());
+             }
+            
+            
+             }else {
+               id_cond2.setText("");
+                 JOptionPane.showMessageDialog(null, id_cond2.getText());
+           }
+           
+    
+  
+    }//GEN-LAST:event_identite_num2ActionPerformed
+/*conducteur 2 option*/
+    private void jButton8MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton8MouseClicked
+       jdialog_contrat.setVisible(false);
+       identite_num2.setText("");
+            identite_lieu2.setText("");
+            date_identite2.setText("");
+             date_permis2.setText("");
+             prenom_nom2.setText("");        
+              conducteur_permis2.setText("");
+                      lieu_permis2.setText("");
+    }//GEN-LAST:event_jButton8MouseClicked
+
+    private void cond2_butMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_cond2_butMouseClicked
+     
+                   
+                   
+              
+              typcon = type_identite3.getSelectedItem().toString();
+               niden=Integer.parseInt(identite_num2.getText());
+                lieuid=identite_lieu2.getText();
+                  try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          dtdel= formatter.parse(date_identite2.getText());
+          
+          dtnai= formatter.parse(date_permis2.getText());
+         
+         }catch(ParseException el){
+             
+         }
+            np=prenom_nom2.getText();
+            permco=Integer.parseInt(conducteur_permis2.getText());
+            lieperm=lieu_permis2.getText();
+            
+            
+            identite_num2.setText("");
+            identite_lieu2.setText("");
+            date_identite2.setText("");
+             date_permis2.setText("");
+             prenom_nom2.setText("");        
+              conducteur_permis2.setText("");
+                      lieu_permis2.setText("");
+                   jdialog_contrat.setVisible(false);
+       
+    }//GEN-LAST:event_cond2_butMouseClicked
+/*copy from client to conducteur*/
+    private void copierMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_copierMouseClicked
+       type_identite.setSelectedItem(type_iden.getSelectedItem());
+        identite_num.setText(num_identite.getText());
+            identite_lieu.setText(lieu_identite.getText());
+            date_identite.setText(identite_date.getText());
+             date_permis.setText("");
+             prenom_nom.setText(nom_prenom.getText());        
+              conducteur_permis.setText("");
+                      lieu_permis.setText("");
+                  id_cond1.setText(id_contrat.getText());
+                 
+                       
+                        
+                        
+                  
+                       
+                       
+                      
+                       
+                             
+                       
+                      
+                       
+                       
+                      
+    }//GEN-LAST:event_copierMouseClicked
+
+    private void lieu_departKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lieu_departKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lieu_departKeyPressed
+
+    private void jButton6MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton6MouseClicked
+       show_contrat();
+       choose_contrat.setText("client");
+    }//GEN-LAST:event_jButton6MouseClicked
+
+    private void jButton4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton4MouseClicked
+        show_contratsociete();
+        choose_contrat.setText("societe");
+    }//GEN-LAST:event_jButton4MouseClicked
+
+    private void edit_date_contratActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_date_contratActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edit_date_contratActionPerformed
+
+    private void edit_contrat_modelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_contrat_modelActionPerformed
+     try{
+        edit_contrat_imma.removeAllItems();
+        String a = edit_contrat_model.getSelectedItem().toString();
+           
+ // JOptionPane.showMessageDialog(null,a);
+   session = NewHibernateUtil.getSessionFactory().openSession(); 
+       Query query_table =session.createQuery("from Voiture v where v.modele=:imm" );
+             query_table.setParameter("imm",a); 
+             
+              
+              List<Voiture> voitu = query_table.list();
+            
+           
+         
+         
+         for(Voiture mod:voitu){
+             edit_contrat_imma.addItem(mod.getImmat());
+           
+          }
+     }catch(Exception e){
+         edit_contrat_model.getMouseListeners();
+     }
+    }//GEN-LAST:event_edit_contrat_modelActionPerformed
+
+    private void edit_lieu_departKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_edit_lieu_departKeyPressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edit_lieu_departKeyPressed
+
+    private void edit_num_identiteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_num_identiteActionPerformed
+         String socie = edit_num_identite.getText();
+         id_clso = Integer.parseInt(edit_id_contrat.getText());
+   
+      List<Societe> societe = null ;
+        List<Client> cli = null ;
+      
+   
+    if(edit_type_contrat.getText().equals("client")){
+        
+        
+     try{
+          
+          Query query_clientlist =session.createQuery("from Client v where v.identite=:idcl " );
+             query_clientlist.setParameter("idcl",Long.parseLong(socie)); 
+             cli = query_clientlist.list();
+    }catch(NumberFormatException e){
+        JOptionPane.showMessageDialog(null,e);
+    }
+   
+    
+    if (cli.size()>0){
+                
+            for(Client mod:cli){
+              
+                        edit_nom_prenom.setText(mod.getNomprenom());
+                        edit_tel_client.setText(Long.toString(mod.getTel()));
+                        edit_client_adresse.setText(mod.getAdresse());
+                        edit_type_iden.setSelectedItem(mod.getType());
+                        edit_identite_date.setText(mod.getDelivre().toString());
+                        edit_lieu_identite.setText(mod.getLieuDelivr());
+                        edit_client_naissance.setText(mod.getDateNaiss().toString());
+                        edit_lieu_naiss.setText(mod.getLieuNaiss());
+                        edit_client_nationalite.setText(mod.getNationalite());
+                       id_cliso.setText(Integer.toString(mod.getId()));
+                       
+                    
+                     JOptionPane.showMessageDialog(null, mod.getId().toString());
+                 }
+             } else {
+                id_cliso.setText("");
+                 JOptionPane.showMessageDialog(null, id_contrat.getText());
+                  JOptionPane.showMessageDialog(null, type_contrat.getText());
+             }
+    }else if (edit_type_contrat.getText().equals("societe")){
+         try {
+       
+              Query query_socielist =session.createQuery("from Societe v where v.matFiscal=:idso " );
+             query_socielist.setParameter("idso",socie); 
+            societe = query_socielist.list();
+    }
+    catch(Exception e){
+         JOptionPane.showMessageDialog(null,e);
+    }
+          
+             if(societe.size()>0){
+                
+                 for(Societe mods:societe){
+              
+                        edit_nom_prenom.setText(mods.getNom());
+                        edit_tel_client.setText(Long.toString(mods.getTel()));
+                        edit_client_adresse.setText(mods.getAdresse());
+                         id_cliso.setText(Integer.toString(mods.getId()));
+                        
+                        client_naissance.setText("");
+                        client_lieunaiss.setText("");
+                        client_nationalite.setText("");
+                        identite_date.setText("");
+                        lieu_identite.setText("");
+                    JOptionPane.showMessageDialog(null, "company exist");
+                 }
+                 
+             }else {
+                
+                  JOptionPane.showMessageDialog(null, "le numéro fiscale saisie est inconnue , s'il vos plait ajouter une societé dans societé => ajout , puis revenir ici pour poursuivre votre démarche");
+             }
+    }
+    }//GEN-LAST:event_edit_num_identiteActionPerformed
+
+    private void edit_identite_num_conducActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_identite_num_conducActionPerformed
+    Long conduc = Long.parseLong(edit_identite_num_conduc.getText());
+           
+           List<Conducteur> cond = null ;
+           try {
+            Query query_condlist =session.createQuery("from Conducteur v where v.identite=:idcon " );
+             query_condlist.setParameter("idcon",conduc); 
+            cond = query_condlist.list();
+           }catch (Exception e){
+                   
+                   }
+           
+           if(cond.size()>0){
+                
+            for(Conducteur mode:cond){
+                edit_prenom_nom_conduc.setText(mode.getNompre());
+                       
+                        edit_type_identite_conduc.setSelectedItem(mode.getType());
+                        edit_date_identite_conduc.setText(mode.getDateIdent().toString());
+                        edit_identite_lieu_conduc.setText(mode.getRealisIdenti());
+                         edit_date_permis_conduc.setText(mode.getDateperm().toString());
+                        edit_id_conduc1.setText(Integer.toString(mode.getId()));
+                        edit_conducteur_permis.setText(Long.toString(mode.getNpermis()));
+                        edit_lieu_permis_conduc.setText(mode.getPermisDelivr());
+             }
+            
+            
+             }else {
+               edit_id_conduc1.setText("");
+                 JOptionPane.showMessageDialog(null, edit_id_conduc1.getText());
+           }
+
+
+    
+    }//GEN-LAST:event_edit_identite_num_conducActionPerformed
+
+    private void edit_identite_num_conduc2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_edit_identite_num_conduc2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_edit_identite_num_conduc2ActionPerformed
+
+    private void jLabel209MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel209MouseClicked
+          int k  = show_contrat.getSelectedRow();
+           if(k > -1){
+           TableModel table = show_contrat.getModel();
+          Integer num =Integer.parseInt(table.getValueAt(k, 0).toString());
+           List <Object> voitu = new ArrayList<Object>();
+         if (choose_contrat.getText().equals("client")) { 
+            session = NewHibernateUtil.getSessionFactory().openSession();
+             Query query_voit =sessions.createQuery(" select distinct a.contrat.id , a.voiture.id  , s.client.id , pai.paiment.id , conc.conducteur.id , conc2.conducteur.id from Contrat as c , Voiture as voi left outer join c.assocontratvoitures as a    left outer join c.assocontratclients as s    left outer join c.assocontratpais as pai   left outer join c.assocontratconducteurs as conc  left outer join c.assocontratconducteurs as conc2   where c.id=:idc  " );
+ 
+        query_voit.setParameter("idc", num);
+         voitu = query_voit.list();
+         }else {
+        Query query_voit =sessions.createQuery(" select distinct a.contrat.id , a.voiture.id  , s.societe.id , pai.paiment.id , conc.conducteur.id , conc2.conducteur.id from Contrat as c , Voiture as voi left outer join c.assocontratvoitures as a    left outer join c.assocontratsocies as s    left outer join c.assocontratpais as pai   left outer join c.assocontratconducteurs as conc  left outer join c.assocontratconducteurs as conc2   where c.id=:idc  " );
+ 
+        query_voit.setParameter("idc", num);          
+          voitu = query_voit.list();
+         }
+     JOptionPane.showMessageDialog(null,voitu.toArray());
+         DefaultTableModel tables = (DefaultTableModel) show_contrat.getModel();
+         tables.setRowCount(0);
+        
+       
+        
+     for(int i =0 ; i< voitu.size() ; i++){
+    Integer cont = Integer.parseInt(((Object[]) voitu.get(i))[0].toString());
+    Integer vo = Integer.parseInt(((Object[]) voitu.get(i))[1].toString()); 
+   Integer clisoc = Integer.parseInt(((Object[]) voitu.get(i))[2].toString());
+    Integer pa = Integer.parseInt(((Object[]) voitu.get(i))[3].toString());
+    Integer cond1 = Integer.parseInt(((Object[]) voitu.get(i))[4].toString());
+    Integer cond2 = Integer.parseInt(((Object[]) voitu.get(i))[5].toString());
+    Query query_cont =sessions.createQuery("from Contrat c where c.id=:cont");
+    query_cont.setParameter("cont", cont);
+     List<Contrat> co = query_cont.list();
+     edit_id_contrat.setText(Integer.toString(cont));
+    Query query_voitu =sessions.createQuery("from Voiture c where c.id=:cont");
+    query_voitu.setParameter("cont", vo);
+     List<Voiture> vot = query_voitu.list();
+     if (choose_contrat.getText().equals("client")){
+        Query query_cli =sessions.createQuery("from Client c where c.id=:cont");
+    query_cli.setParameter("cont", clisoc);
+     List<Client> client = query_cli.list();
+      for(Client ct:client){
+        edit_type_iden.setSelectedItem(ct.getType());
+        edit_num_identite.setText(Long.toString(ct.getIdentite()));
+        edit_identite_date.setText(ct.getDelivre().toString());
+        edit_lieu_identite.setText(ct.getLieuDelivr());
+        edit_nom_prenom.setText(ct.getNomprenom());
+        edit_tel_client.setText(Long.toString(ct.getTel()));
+        edit_client_naissance.setText(ct.getDateNaiss().toString());
+        edit_lieu_naiss.setText(ct.getLieuNaiss());
+        edit_client_nationalite.setText(ct.getNationalite());
+        edit_client_adresse.setText(ct.getAdresse());
+        
+        id_cliso.setText(Integer.toString(ct.getId()));
+    }
+     }else if (choose_contrat.getText().equals("societe")) {
+         Query query_clis =sessions.createQuery("from Societe c where c.id=:cont");
+    query_clis.setParameter("cont", clisoc);
+     List<Societe> socie = query_clis.list();
+     for(Societe cte:socie){
+        
+        edit_num_identite.setText(cte.getMatFiscal());
+       
+       
+        edit_nom_prenom.setText(cte.getNom());
+        edit_tel_client.setText(Long.toString(cte.getTel()));
+       
+      
+        
+        edit_client_adresse.setText(cte.getAdresse());
+        
+        id_cliso.setText(Integer.toString(cte.getId()));
+    }
+     }
+       Query query_pai =sessions.createQuery("from Paiment c where c.id=:cont");
+    query_pai.setParameter("cont", pa);
+     List<Paiment> paim = query_pai.list();
+     
+       Query query_cond1 =sessions.createQuery("from Conducteur c where c.id=:cont");
+    query_cond1.setParameter("cont", cond1);
+     List<Conducteur> conduc1 = query_cond1.list();
+     
+     Query query_cond2 =sessions.createQuery("from Conducteur c where c.id=:cont");
+    query_cond2.setParameter("cont", cond2);
+     List<Conducteur> conduc2 = query_cond2.list();
+     
+    for(Contrat contr:co){
+        edit_date_contrat.setText(contr.getDateContrat().toString());
+        edit_contrat_deb.setDate(contr.getDateDep());
+        edit_contrat_retour.setDate(contr.getDateRet());
+       SimpleDateFormat form = new SimpleDateFormat("HH:mm");
+        edit_heure_dep.setSelectedItem(form.format(contr.getHeureDep()));
+        edit_heure_fin.setSelectedItem(form.format(contr.getHeureRet()));
+        edit_km_dep.setText(Integer.toString(contr.getKmDep()));
+        edit_lieu_depart.setText(contr.getLieuDep());
+        edit_lieu_retour.setText(contr.getLieuRetour());
+    }
+    for(Voiture vd:vot){
+       // edit_contrat_model.setSelectedItem(vd.getModele());
+        edit_contrat_model.addItem(vd.getModele());
+        id_veh.setText(Integer.toString(vd.getId()));
+    }
+    for(Paiment paime : paim){
+        edit_montant_gatan.setText(Float.toString(paime.getGatanti()));
+        edit_montant_pay.setText(Float.toString(paime.getPay()));
+        edit_pay_gatan.setSelectedItem(paime.getTypeGatan());
+        edit_type_pay.setSelectedItem(paime.getTypePay());
+        edit_pai_day.setDate(paime.getDatePay());
+        edit_observation.setText(paime.getRemarque());
+        
+        id_pai.setText(Integer.toString(paime.getId()));
+    }
+    for(Conducteur cnd :conduc1){
+        edit_type_identite_conduc.setSelectedItem(cnd.getType());
+        edit_identite_num_conduc.setText(Long.toString(cnd.getIdentite()));
+        edit_date_identite_conduc.setText(cnd.getDateIdent().toString());
+        edit_identite_lieu_conduc.setText(cnd.getRealisIdenti());
+        edit_prenom_nom_conduc.setText(cnd.getNompre());
+        edit_conducteur_permis.setText(Long.toString(cnd.getNpermis()));
+        edit_lieu_permis_conduc.setText(cnd.getPermisDelivr());
+        edit_date_permis_conduc.setText(cnd.getDateperm().toString());
+        
+        edit_id_conduc1.setText(Integer.toString(cnd.getId()));
+    }
+    for(Conducteur cnde :conduc2){
+        edit_type_identite_conduc2.setSelectedItem(cnde.getType());
+        edit_identite_num_conduc2.setText(Long.toString(cnde.getIdentite()));
+        edit_date_identite_conduc2.setText(cnde.getDateIdent().toString());
+        edit_identite_lieu_conduc2.setText(cnde.getRealisIdenti());
+        edit_prenom_nom_conduc2.setText(cnde.getNompre());
+        edit_conducteur_permis_conduc2.setText(Long.toString(cnde.getNpermis()));
+        edit_lieu_permis_conduc2.setText(cnde.getPermisDelivr());
+        edit_date_permis_conduc2.setText(cnde.getDateperm().toString());
+        edit_id_conduc2.setText(Integer.toString(cnde.getId()));
+    }
+    edit_type_contrat.setText(choose_contrat.getText());
+  
+        /*     Object[] objvoit = new Object [] {((Object[]) voitu.get(i))[0] ,((Object[]) voitu.get(i))[1],((Object[]) voitu.get(i))[2],((Object[]) voitu.get(i))[3],((Object[]) voitu.get(i))[4],((Object[]) voitu.get(i))[5],((Object[]) voitu.get(i))[6],((Object[]) voitu.get(i))[7] ,((Object[]) voitu.get(i))[8],((Object[]) voitu.get(i))[9] };
+             tables.addRow(objvoit);*/
+      }
+      CardLayout cardLayout1 = (CardLayout) affichage.getLayout();
+           cardLayout1.show(affichage, "edit_contrat");
+           }
+    }//GEN-LAST:event_jLabel209MouseClicked
+
+    private void edit_contrat_buttMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_edit_contrat_buttMouseClicked
+         Contrat contrat = new Contrat();
+        Client client = new Client();
+        Paiment pai = new Paiment();
+        Voiture voiture = new Voiture();
+        Conducteur cond1 = new Conducteur();
+         Conducteur cond2 = new Conducteur();
+        Societe societe = new Societe();
+        Assocontratvoiture aa = new Assocontratvoiture();
+        Assocontratclient cliasso = new Assocontratclient();
+         Assocontratpai clipaye = new Assocontratpai();
+         Assocontratsocie asssocie = new Assocontratsocie();
+         Assocontratconducteur assocond = new Assocontratconducteur();
+         Assocontratconducteur assocond2 = new Assocontratconducteur();
+       
+      try {   
+         try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          Date dateco = formatter.parse(edit_date_contrat.getText());
+          contrat.setDateContrat(dateco);
+         }catch(ParseException e){
+             
+         }
+         contrat.setDateDep(edit_contrat_deb.getDate());
+         contrat.setDateRet(edit_contrat_retour.getDate());
+         java.sql.Time dep = null;
+         java.sql.Time ret = null ;
+         try {
+           SimpleDateFormat format = new SimpleDateFormat("hh:mm");
+           dep = new java.sql.Time(format.parse(edit_heure_dep.getSelectedItem().toString()).getTime());
+           ret = new java.sql.Time(format.parse(edit_heure_fin.getSelectedItem().toString()).getTime());
+        
+         
+          contrat.setHeureDep(dep);
+          contrat.setHeureRet(ret);
+         }catch(HeadlessException | ParseException e){
+             
+         }
+        
+         contrat.setLieuDep(edit_lieu_depart.getText());
+         contrat.setLieuRetour(edit_lieu_retour.getText());
+         contrat.setKmDep(Integer.parseInt(edit_km_dep.getText()));
+         contrat.setKmRetour(Integer.parseInt(edit_km_retour.getText()));
+       //  contrat.setKmRetour(Integer.parseInt(km_retour.getText()));
+         
+         String immat = edit_contrat_imma.getSelectedItem().toString();
+         Integer ids = Integer.parseInt(edit_id_contrat.getText());
+          JOptionPane.showMessageDialog(null,"id contr = "+ids);
+         Query query_table =session.createQuery("select v.id from Voiture v where v.immat=:imm" );
+             query_table.setParameter("imm",immat); 
+            
+             Integer id =(Integer) query_table.uniqueResult();
+             JOptionPane.showMessageDialog(null,"id veh = "+id);
+              Query query_asso =session.createQuery("select v.id from Assocontratvoiture v where v.contrat.id=:ids" );
+             query_asso.setParameter("ids",ids); 
+            
+             Integer idasso =(Integer) query_asso.uniqueResult();
+              JOptionPane.showMessageDialog(null,"id asso = "+idasso);
+             
+ if (id != null){
+   voiture.setId(id);
+   contrat.setId(ids);
+   aa.setId(idasso);
+   
+//aa.setContrat(contrat);
+aa.setVoiture(voiture);
+operation.Editcontratvoit(contrat , aa);
+ }else {
+      JOptionPane.showMessageDialog(null, "pas de voiture disponible");
+ }
+  /**************************************************/
+ if (null != edit_type_contrat.getText())switch (edit_type_contrat.getText()) {
+      /**************************************************/
+        case "societe":
+             /**************************************************/
+            Query query_assosoc =session.createQuery("select v.id from Assocontratsocie v where v.contrat.id=:ids" );
+             query_assosoc.setParameter("ids",ids); 
+            
+             Integer idassosoc =(Integer) query_assosoc.uniqueResult();
+                    
+                      societe.setNom(edit_nom_prenom.getText());
+                      societe.setTel(Long.parseLong(edit_tel_client.getText()));
+                        societe.setAdresse(edit_client_adresse.getText());
+                        
+                        edit_client_naissance.setText("");
+                        edit_lieu_naiss.setText("");
+                        edit_client_nationalite.setText("");
+                        edit_identite_date.setText("");
+                        edit_lieu_identite.setText("");
+             societe.setId(Integer.parseInt(id_cliso.getText()));            
+            asssocie.setId(idassosoc);
+            asssocie.setSociete(societe);
+            operation.Editcontratsocie(societe, asssocie);
+            break;
+             /**************************************************/
+        case "client":
+             /**************************************************/
+            if((!(id_cliso.getText().equals("")))){
+            Query query_assocli =session.createQuery("select v.id from Assocontratclient v where v.contrat.id=:ids" );
+             query_assocli.setParameter("ids",ids); 
+            
+             Integer idassocli =(Integer) query_assocli.uniqueResult();
+            client.setType(edit_type_iden.getSelectedItem().toString());
+            client.setIdentite(Integer.parseInt(edit_num_identite.getText()));
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateclient = formatter.parse(edit_identite_date.getText());
+                client.setDelivre(dateclient);
+                Date datenaiss = formatter.parse(edit_client_naissance.getText());
+                client.setDateNaiss(datenaiss);
+            }catch(ParseException e){
+                
+            } 
+            client.setLieuDelivr(edit_lieu_identite.getText());
+            client.setNomprenom(edit_nom_prenom.getText());
+            client.setTel(Integer.parseInt(edit_tel_client.getText()));
+            client.setLieuNaiss(edit_lieu_naiss.getText());
+            client.setAdresse(edit_client_adresse.getText());
+            client.setNationalite(edit_client_nationalite.getText());
+            client.setEmail("");
+            
+            client.setId(Integer.parseInt(id_cliso.getText()));
+            cliasso.setId(idassocli);
+            cliasso.setClient(client);
+            operation.Editcontratclient(client, cliasso , "edit");
+            JOptionPane.showMessageDialog(null, "edit the same client");
+            
+           
+            
+                 /**************************************************/
+            }else if(id_cliso.getText().equals("")){
+                 /**************************************************/
+                 Query query_assocli =session.createQuery("select v.id from Assocontratclient v where v.contrat.id=:ids" );
+             query_assocli.setParameter("ids",ids); 
+            
+             Integer idassocli2 =(Integer) query_assocli.uniqueResult();
+             
+                 client.setType(edit_type_iden.getSelectedItem().toString());
+            client.setIdentite(Integer.parseInt(edit_num_identite.getText()));
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateclient = formatter.parse(edit_identite_date.getText());
+                client.setDelivre(dateclient);
+                Date datenaiss = formatter.parse(edit_client_naissance.getText());
+                client.setDateNaiss(datenaiss);
+            }catch(ParseException e){
+                
+            } 
+            client.setLieuDelivr(edit_lieu_identite.getText());
+            client.setNomprenom(edit_nom_prenom.getText());
+            client.setTel(Integer.parseInt(edit_tel_client.getText()));
+            client.setLieuNaiss(edit_lieu_naiss.getText());
+            client.setAdresse(edit_client_adresse.getText());
+            client.setNationalite(edit_client_nationalite.getText());
+            client.setEmail("");
+            
+            cliasso.setId(idassocli2);
+            cliasso.setClient(client);
+            operation.Editcontratclient(client, cliasso , "addedit");
+            JOptionPane.showMessageDialog(null, "edit with new client client");
+            }
+            break;
+            
+        
+        default:
+            break;
+    }
+  /***********************************************************************************************************************/
+ 
+ /**************************************************************conducteur modif********************************************************************/
+ /**************************************************************conducteur modif********************************************************************/
+
+ if(edit_id_conduc1.getText().isEmpty() == false){
+     if((!(edit_id_conduc1.getText().equals("")))){
+            Query query_assocond1 =session.createQuery("select v.id from Assocontratconducteur v where v.contrat.id=:ids" );
+             query_assocond1.setParameter("ids",ids); 
+            
+             Integer idassocond1 =(Integer) query_assocond1.uniqueResult();
+                 cond1.setType(edit_type_identite_conduc.getSelectedItem().toString());
+                  cond1.setIdentite(Integer.parseInt(edit_identite_num_conduc.getText()));
+                cond1.setRealisIdenti(edit_identite_lieu_conduc.getText());
+                  try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          Date datecond = formatter.parse(edit_date_identite_conduc.getText());
+          cond1.setDateIdent(datecond);
+          Date datenaissc = formatter.parse(edit_date_permis_conduc.getText());
+          cond1.setDateperm(datenaissc);
+         }catch(ParseException e){
+             
+         }
+            cond1.setNompre(edit_prenom_nom_conduc.getText());
+            cond1.setNpermis(Integer.parseInt(edit_conducteur_permis.getText()));
+            cond1.setPermisDelivr(edit_lieu_permis_conduc.getText());
+                cond1.setId(idassocond1);
+                assocond.setConducteur(cond1);
+               
+                operation.Editcontratconduc1(cond1, assocond , "editcond");
+                
+                
+              }else if(edit_id_conduc1.getText().equals("")) {
+                  
+                  
+                   Query query_assocond1 =session.createQuery("select v.id from Assocontratconducteur v where v.contrat.id=:ids" );
+             query_assocond1.setParameter("ids",ids); 
+            
+             Integer idassocond11 =(Integer) query_assocond1.uniqueResult();
+             
+                 cond1.setType(edit_type_identite_conduc.getSelectedItem().toString());
+                  cond1.setIdentite(Integer.parseInt(edit_identite_num_conduc.getText()));
+                cond1.setRealisIdenti(edit_identite_lieu_conduc.getText());
+                  try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          Date datecond = formatter.parse(edit_date_identite_conduc.getText());
+          cond1.setDateIdent(datecond);
+          Date datenaissc = formatter.parse(edit_date_permis_conduc.getText());
+          cond1.setDateperm(datenaissc);
+         }catch(ParseException e){
+             
+         }
+            cond1.setNompre(edit_prenom_nom_conduc.getText());
+            cond1.setNpermis(Integer.parseInt(edit_conducteur_permis.getText()));
+            cond1.setPermisDelivr(edit_lieu_permis_conduc.getText());
+            assocond.setId(idassocond11);
+            assocond.setConducteur(cond1);
+            
+            operation.Editcontratconduc1(cond1, assocond , "addcond");
+            
+              }
+ 
+ }
+ /*****************************************************************************************************************/
+  /*****************************************************************************************************************/
+ 
+ /**************************************************************************conducteur2 modif*******************************************************/
+ /**************************************************************************conducteur2 modif*******************************************************/
+  if(check_del.getText().equals("")){
+ if(edit_id_conduc2.getText().isEmpty() == false){
+     if((!(edit_id_conduc2.getText().equals("")))){
+            Query query_assocond2 =session.createQuery("select v.id from Assocontratconducteur v where v.contrat.id=:ids" );
+             query_assocond2.setParameter("ids",ids); 
+            
+             Integer idassocond2 =(Integer) query_assocond2.uniqueResult();
+                 cond2.setType(edit_type_identite_conduc2.getSelectedItem().toString());
+                  cond2.setIdentite(Integer.parseInt(edit_identite_num_conduc2.getText()));
+                cond2.setRealisIdenti(edit_identite_lieu_conduc2.getText());
+                  try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          Date datecond = formatter.parse(edit_date_identite_conduc2.getText());
+          cond2.setDateIdent(datecond);
+          Date datenaissc = formatter.parse(edit_date_permis_conduc2.getText());
+          cond2.setDateperm(datenaissc);
+         }catch(ParseException e){
+             
+         }
+            cond2.setNompre(edit_prenom_nom_conduc2.getText());
+            cond2.setNpermis(Integer.parseInt(edit_conducteur_permis_conduc2.getText()));
+            cond2.setPermisDelivr(edit_lieu_permis_conduc2.getText());
+                cond2.setId(idassocond2);
+                assocond2.setConducteur(cond2);
+               
+                operation.Editcontratconduc2(cond2, assocond2 , "editcond2");
+                
+                
+              }else if(edit_id_conduc2.getText().equals("")) {
+                  
+                  
+                   Query query_assocond2 =session.createQuery("select v.id from Assocontratconducteur v where v.contrat.id=:ids" );
+             query_assocond2.setParameter("ids",ids); 
+            
+             Integer idassocond12 =(Integer) query_assocond2.uniqueResult();
+             
+                 cond2.setType(edit_type_identite_conduc2.getSelectedItem().toString());
+                  cond2.setIdentite(Integer.parseInt(edit_identite_num_conduc2.getText()));
+                cond2.setRealisIdenti(edit_identite_lieu_conduc2.getText());
+                  try {
+         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+          Date datecond = formatter.parse(edit_date_identite_conduc2.getText());
+          cond2.setDateIdent(datecond);
+          Date datenaissc = formatter.parse(edit_date_permis_conduc2.getText());
+          cond2.setDateperm(datenaissc);
+         }catch(ParseException e){
+             
+         }
+            cond2.setNompre(edit_prenom_nom_conduc.getText());
+            cond2.setNpermis(Integer.parseInt(edit_conducteur_permis_conduc2.getText()));
+            cond2.setPermisDelivr(edit_lieu_permis_conduc2.getText());
+            assocond2.setId(idassocond12);
+            assocond2.setConducteur(cond2);
+            
+            operation.Editcontratconduc2(cond2, assocond2 , "addcond2");
+            
+              }
+ 
+ }
+  }else if(check_del.getText().equals("delete")) {
+      
+  }
+  
+   pai.setTypeGatan(edit_pay_gatan.getSelectedItem().toString());
+       pai.setTypePay(edit_type_pay.getSelectedItem().toString());
+       pai.setGatanti(Float.parseFloat(edit_montant_gatan.getText()));
+       pai.setPay(Float.parseFloat(edit_montant_pay.getText()));
+       pai.setDatePay(edit_pai_day.getDate());
+       pai.setRemarque(edit_observation.getText());
+        clipaye.setContrat(contrat);
+        clipaye.setPaiment(pai);
+        operation.Addassocontratpai(pai, clipaye);
+ /*************************************************************************************************************************************************************/
+ /*************************************************************************************************************************************************************/
+ 
+      }catch(HeadlessException | NumberFormatException e){
+          
+      }
+    }//GEN-LAST:event_edit_contrat_buttMouseClicked
+
+    private void contrat_modelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_contrat_modelMouseClicked
+      if(evt.getButton() == MouseEvent.BUTTON1) {
+          try{
+        contrat_model.removeAllItems();;
+      
+        Date deb = contrat_deb.getDate();
+  Date ret= contrat_retour.getDate();
+   session = NewHibernateUtil.getSessionFactory().openSession(); 
+    
+   Query query_table =session.createQuery("select distinct  m from Voiture as v , Contrat ctr , Model as m where ((v.id not in (select cv.voiture from  v.assocontratvoitures as cv)) or (v.id  in (select cs.voiture  from  ctr.assocontratvoitures as cs where (cs.contrat.dateDep<:deb and cs.contrat.dateRet <:deb) or (cs.contrat.dateDep>:ret and cs.contrat.dateRet>:ret))  )) and v.modele=m.model " );
+       
+        
+     query_table.setDate("deb",deb); 
+            query_table.setDate("ret",ret); 
+         
+              
+              List<Model> voitu = query_table.list();
+        
+           
+       
+         
+         for(Model mod:voitu){
+             contrat_model.addItem(mod.getModel());
+           
+          }
+      }catch(Exception e){
+           //   contrat_model.getMouseListeners();
+              }
+      }
+    }//GEN-LAST:event_contrat_modelMouseClicked
+
+    private void edit_contrat_modelMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_edit_contrat_modelMouseClicked
+       if(evt.getButton() == MouseEvent.BUTTON1) {
+          try{
+        edit_contrat_model.removeAllItems();;
+      
+        Date deb = edit_contrat_deb.getDate();
+  Date ret= edit_contrat_retour.getDate();
+   session = NewHibernateUtil.getSessionFactory().openSession(); 
+    
+   Query query_table =session.createQuery("select distinct  m from Voiture as v , Contrat ctr , Model as m where ((v.id not in (select cv.voiture from  v.assocontratvoitures as cv)) or (v.id  in (select cs.voiture  from  ctr.assocontratvoitures as cs where (cs.contrat.dateDep<:deb and cs.contrat.dateRet <:deb) or (cs.contrat.dateDep>:ret and cs.contrat.dateRet>:ret))  )) and v.modele=m.model " );
+       
+        
+     query_table.setDate("deb",deb); 
+            query_table.setDate("ret",ret); 
+         
+              
+              List<Model> voitu = query_table.list();
+        
+           
+       
+         
+         for(Model mod:voitu){
+             edit_contrat_model.addItem(mod.getModel());
+           
+          }
+      }catch(Exception e){
+              edit_contrat_model.getMouseListeners();
+              }
+      }
+    }//GEN-LAST:event_edit_contrat_modelMouseClicked
+   
+      
+
 
 
   /*     */
@@ -7567,6 +9141,8 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JPanel caisse_autre;
     private javax.swing.JTable caisse_list;
     private javax.swing.JPanel caisse_sortie;
+    private javax.swing.JTextField check_del;
+    private javax.swing.JTextField choose_contrat;
     private javax.swing.JTextField client_adresse;
     private javax.swing.JTable client_affi;
     private javax.swing.JLabel client_contrat;
@@ -7588,6 +9164,7 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JButton color;
     private javax.swing.JPanel comany_edit;
     private javax.swing.JPanel company_list;
+    private javax.swing.JButton cond2_but;
     private javax.swing.JTextField conducteur_permis;
     private javax.swing.JTextField conducteur_permis2;
     private javax.swing.JButton conducteurtwo;
@@ -7619,22 +9196,67 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JTextField deb_voi;
     private javax.swing.JFormattedTextField debut_assurance;
     private javax.swing.JFormattedTextField debut_visit;
+    private javax.swing.JButton delete_cond2;
     private javax.swing.JLabel dep_ber;
     private javax.swing.JTextField dep_reserv;
     private javax.swing.JLabel dep_voi;
     private javax.swing.JTable depense_bereau;
     private javax.swing.JTable depense_voit;
     private javax.swing.JPanel edit_all;
+    private javax.swing.JTextField edit_client_adresse;
+    private javax.swing.JTextField edit_client_naissance;
+    private javax.swing.JTextField edit_client_nationalite;
     private javax.swing.JButton edit_company;
+    private javax.swing.JTextField edit_conducteur_permis;
+    private javax.swing.JTextField edit_conducteur_permis_conduc2;
+    private javax.swing.JPanel edit_contrat;
+    private javax.swing.JButton edit_contrat_butt;
+    private com.toedter.calendar.JDateChooser edit_contrat_deb;
+    private javax.swing.JComboBox<String> edit_contrat_imma;
+    private javax.swing.JComboBox<String> edit_contrat_model;
+    private com.toedter.calendar.JDateChooser edit_contrat_retour;
+    private javax.swing.JTextField edit_date_contrat;
+    private javax.swing.JTextField edit_date_identite_conduc;
+    private javax.swing.JTextField edit_date_identite_conduc2;
+    private javax.swing.JTextField edit_date_permis_conduc;
+    private javax.swing.JTextField edit_date_permis_conduc2;
     private javax.swing.JTextField edit_datedeb;
     private javax.swing.JTextField edit_datefin;
     private javax.swing.JTextField edit_entretien;
+    private javax.swing.JComboBox<String> edit_heure_dep;
+    private javax.swing.JComboBox<String> edit_heure_fin;
     private javax.swing.JTextField edit_id;
+    private javax.swing.JTextField edit_id_conduc1;
+    private javax.swing.JTextField edit_id_conduc2;
+    private javax.swing.JTextField edit_id_contrat;
+    private javax.swing.JTextField edit_identite_date;
+    private javax.swing.JTextField edit_identite_lieu_conduc;
+    private javax.swing.JTextField edit_identite_lieu_conduc2;
+    private javax.swing.JTextField edit_identite_num_conduc;
+    private javax.swing.JTextField edit_identite_num_conduc2;
     private javax.swing.JTextField edit_km;
+    private javax.swing.JTextField edit_km_dep;
+    private javax.swing.JTextField edit_km_retour;
+    private javax.swing.JTextField edit_lieu_depart;
+    private javax.swing.JTextField edit_lieu_identite;
+    private javax.swing.JTextField edit_lieu_naiss;
+    private javax.swing.JTextField edit_lieu_permis_conduc;
+    private javax.swing.JTextField edit_lieu_permis_conduc2;
+    private javax.swing.JTextField edit_lieu_retour;
     private javax.swing.JButton edit_maint;
     private javax.swing.JTextField edit_montant;
+    private javax.swing.JTextField edit_montant_gatan;
+    private javax.swing.JTextField edit_montant_pay;
+    private javax.swing.JTextField edit_nom_prenom;
+    private javax.swing.JTextField edit_num_identite;
     private javax.swing.JTextField edit_numassur;
+    private javax.swing.JTextArea edit_observation;
+    private com.toedter.calendar.JDateChooser edit_pai_day;
+    private javax.swing.JComboBox<String> edit_pay_gatan;
+    private javax.swing.JTextField edit_prenom_nom_conduc;
+    private javax.swing.JTextField edit_prenom_nom_conduc2;
     private javax.swing.JTextField edit_remar;
+    private javax.swing.JTextField edit_retour_causs;
     private javax.swing.JButton edit_societe;
     private javax.swing.JTextField edit_societe_adresse;
     private javax.swing.JTextField edit_societe_email;
@@ -7642,6 +9264,12 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JTextField edit_societe_nom;
     private javax.swing.JTextField edit_societe_tel;
     private javax.swing.JPanel edit_societi;
+    private javax.swing.JTextField edit_tel_client;
+    private javax.swing.JTextField edit_type_contrat;
+    private javax.swing.JComboBox<String> edit_type_iden;
+    private javax.swing.JComboBox<String> edit_type_identite_conduc;
+    private javax.swing.JComboBox<String> edit_type_identite_conduc2;
+    private javax.swing.JComboBox<String> edit_type_pay;
     private javax.swing.JButton edit_utilisateur;
     private javax.swing.JPanel edit_voit;
     private javax.swing.JTextField editadresse_client;
@@ -7686,12 +9314,15 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JComboBox<String> heure_retourreserv;
     private javax.swing.JComboBox<String> huile_mod;
     private javax.swing.JTable huille_affi;
+    private javax.swing.JTextField id_cliso;
     private javax.swing.JTextField id_cond1;
     private javax.swing.JTextField id_cond2;
     private javax.swing.JTextField id_contrat;
     private javax.swing.JTextField id_modif;
+    private javax.swing.JTextField id_pai;
     private javax.swing.JTextField id_societ;
     private javax.swing.JTextField id_societfact;
+    private javax.swing.JTextField id_veh;
     private javax.swing.JTextField identite_date;
     private javax.swing.JTextField identite_lieu;
     private javax.swing.JTextField identite_lieu2;
@@ -7704,11 +9335,11 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton8;
     private com.toedter.calendar.JDateChooser jDateChooser1;
-    private com.toedter.calendar.JDateChooser jDateChooser2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel100;
@@ -7831,6 +9462,7 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JLabel jLabel206;
     private javax.swing.JLabel jLabel207;
     private javax.swing.JLabel jLabel208;
+    private javax.swing.JLabel jLabel209;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel210;
     private javax.swing.JLabel jLabel211;
@@ -7843,6 +9475,7 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JLabel jLabel218;
     private javax.swing.JLabel jLabel219;
     private javax.swing.JLabel jLabel22;
+    private javax.swing.JLabel jLabel220;
     private javax.swing.JLabel jLabel221;
     private javax.swing.JLabel jLabel222;
     private javax.swing.JLabel jLabel223;
@@ -7859,7 +9492,13 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JLabel jLabel233;
     private javax.swing.JLabel jLabel234;
     private javax.swing.JLabel jLabel235;
+    private javax.swing.JLabel jLabel236;
+    private javax.swing.JLabel jLabel237;
+    private javax.swing.JLabel jLabel238;
+    private javax.swing.JLabel jLabel239;
     private javax.swing.JLabel jLabel24;
+    private javax.swing.JLabel jLabel240;
+    private javax.swing.JLabel jLabel241;
     private javax.swing.JLabel jLabel242;
     private javax.swing.JLabel jLabel243;
     private javax.swing.JLabel jLabel244;
@@ -7869,9 +9508,49 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JLabel jLabel248;
     private javax.swing.JLabel jLabel249;
     private javax.swing.JLabel jLabel25;
+    private javax.swing.JLabel jLabel250;
+    private javax.swing.JLabel jLabel251;
+    private javax.swing.JLabel jLabel252;
+    private javax.swing.JLabel jLabel253;
+    private javax.swing.JLabel jLabel254;
+    private javax.swing.JLabel jLabel255;
+    private javax.swing.JLabel jLabel256;
+    private javax.swing.JLabel jLabel257;
+    private javax.swing.JLabel jLabel258;
+    private javax.swing.JLabel jLabel259;
     private javax.swing.JLabel jLabel26;
+    private javax.swing.JLabel jLabel260;
+    private javax.swing.JLabel jLabel261;
+    private javax.swing.JLabel jLabel262;
+    private javax.swing.JLabel jLabel263;
+    private javax.swing.JLabel jLabel264;
+    private javax.swing.JLabel jLabel265;
+    private javax.swing.JLabel jLabel266;
+    private javax.swing.JLabel jLabel267;
+    private javax.swing.JLabel jLabel268;
+    private javax.swing.JLabel jLabel269;
     private javax.swing.JLabel jLabel27;
+    private javax.swing.JLabel jLabel270;
+    private javax.swing.JLabel jLabel271;
+    private javax.swing.JLabel jLabel272;
+    private javax.swing.JLabel jLabel273;
+    private javax.swing.JLabel jLabel274;
+    private javax.swing.JLabel jLabel275;
+    private javax.swing.JLabel jLabel276;
+    private javax.swing.JLabel jLabel277;
+    private javax.swing.JLabel jLabel278;
+    private javax.swing.JLabel jLabel279;
     private javax.swing.JLabel jLabel28;
+    private javax.swing.JLabel jLabel280;
+    private javax.swing.JLabel jLabel281;
+    private javax.swing.JLabel jLabel282;
+    private javax.swing.JLabel jLabel283;
+    private javax.swing.JLabel jLabel284;
+    private javax.swing.JLabel jLabel285;
+    private javax.swing.JLabel jLabel286;
+    private javax.swing.JLabel jLabel287;
+    private javax.swing.JLabel jLabel288;
+    private javax.swing.JLabel jLabel289;
     private javax.swing.JLabel jLabel29;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel30;
@@ -7979,6 +9658,7 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JScrollPane jScrollPane32;
     private javax.swing.JScrollPane jScrollPane33;
     private javax.swing.JScrollPane jScrollPane34;
+    private javax.swing.JScrollPane jScrollPane35;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JScrollPane jScrollPane6;
@@ -8017,7 +9697,12 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JSeparator jSeparator36;
     private javax.swing.JSeparator jSeparator37;
     private javax.swing.JSeparator jSeparator38;
+    private javax.swing.JSeparator jSeparator39;
     private javax.swing.JSeparator jSeparator4;
+    private javax.swing.JSeparator jSeparator40;
+    private javax.swing.JSeparator jSeparator41;
+    private javax.swing.JSeparator jSeparator42;
+    private javax.swing.JSeparator jSeparator43;
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
@@ -8026,7 +9711,6 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JTable jTable10;
     private javax.swing.JTable jTable12;
     private javax.swing.JTable jTable13;
-    private javax.swing.JTable jTable9;
     private javax.swing.JLabel j_immat;
     private javax.swing.JLabel j_immats;
     private javax.swing.JLabel j_mod;
@@ -8150,6 +9834,7 @@ operation.Addcontrat(contrat , aa);
     private javax.swing.JButton save_client;
     private javax.swing.JButton save_reserv;
     private javax.swing.JButton save_societe;
+    private javax.swing.JTable show_contrat;
     private javax.swing.JLabel show_maint;
     private javax.swing.JLabel show_maint1;
     private javax.swing.JTextField soci_adresse;

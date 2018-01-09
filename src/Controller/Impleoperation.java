@@ -472,10 +472,133 @@ public void Editkmvoiture(Integer id , Integer km){
     }
 
     @Override
-    public void Editcontrat(Integer id_contrat) {
+    public void Editcontrat(Integer id_contrat , Contrat contr) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-
+    @Override
+ public void Editcontratvoit (Contrat contr ,Assocontratvoiture assovoi ){
+      Transaction tx = session.beginTransaction();
+     Contrat cnt = (Contrat)session.get(Contrat.class, contr.getId());
+    Assocontratvoiture avoi = (Assocontratvoiture)session.get(Assocontratvoiture.class, assovoi.getId());
+    cnt.setDateContrat(contr.getDateContrat());
+    cnt.setDateDep(contr.getDateDep());
+    cnt.setDateRet(contr.getDateRet());
+    cnt.setHeureDep(contr.getHeureDep());
+    cnt.setHeureRet(contr.getHeureRet());
+    cnt.setLieuDep(contr.getLieuDep());
+    cnt.setLieuRetour(contr.getLieuRetour());
+    cnt.setKmDep(contr.getKmDep());
+    cnt.setKmRetour(contr.getKmRetour()); 
+    avoi.setVoiture(assovoi.getVoiture());
+    session.update(cnt);
+    session.update(avoi);
+            tx.commit();
+ }
+ @Override
+      public void Editcontratpai (Integer id_contrat , Integer id_voit){
+          
+      }
+      @Override
+      public void Editcontratconduc1 (Conducteur cond1 , Assocontratconducteur assocond , String type){
+            Transaction tx = session.beginTransaction();
+            Conducteur cd = (Conducteur)session.get(Conducteur.class, cond1.getId());
+            Assocontratconducteur asscond = (Assocontratconducteur)session.get(Assocontratconducteur.class, assocond.getId());
+             switch (type) {
+              case "editcond":
+                  cd.setIdentite(cond1.getIdentite());
+                  cd.setDateIdent(cond1.getDateIdent());
+                  cd.setNpermis(cond1.getNpermis());
+                  cd.setDateperm(cond1.getDateperm());
+                  cd.setPermisDelivr(cond1.getPermisDelivr());
+                  cd.setRealisIdenti(cond1.getRealisIdenti());
+                  cd.setNompre(cond1.getNompre());
+                  cd.setType(cond1.getType());
+                  asscond.setConducteur(assocond.getConducteur());
+                   session.update(cd);
+                   session.update(asscond);
+                   tx.commit();
+                  break ;
+              case"addcond" :
+                  asscond.setConducteur(assocond.getConducteur());
+                   session.save(cond1);
+                  session.update(asscond);
+                   tx.commit();
+                  break ;
+             }
+      }
+      @Override
+      public void Editcontratconduc2 (Conducteur cond2 , Assocontratconducteur assocond2 , String type){
+          Transaction tx = session.beginTransaction();
+            Conducteur cd = (Conducteur)session.get(Conducteur.class, cond2.getId());
+            Assocontratconducteur asscond = (Assocontratconducteur)session.get(Assocontratconducteur.class, assocond2.getId());
+             switch (type) {
+              case "editcond2":
+                  cd.setIdentite(cond2.getIdentite());
+                  cd.setDateIdent(cond2.getDateIdent());
+                  cd.setNpermis(cond2.getNpermis());
+                  cd.setDateperm(cond2.getDateperm());
+                  cd.setPermisDelivr(cond2.getPermisDelivr());
+                  cd.setRealisIdenti(cond2.getRealisIdenti());
+                  cd.setNompre(cond2.getNompre());
+                  cd.setType(cond2.getType());
+                  asscond.setConducteur(assocond2.getConducteur());
+                   session.update(cd);
+                   session.update(asscond);
+                   tx.commit();
+                  break ;
+              case"addcond2" :
+                  asscond.setConducteur(assocond2.getConducteur());
+                   session.save(cond2);
+                  session.update(asscond);
+                   tx.commit();
+                  break ;
+             }
+      }
+      @Override
+      public void Editcontratclient (Client cl ,Assocontratclient cli , String type){
+           Transaction tx = session.beginTransaction();
+            Client client = (Client)session.get(Client.class, cl.getId());
+            Assocontratclient asscl = (Assocontratclient)session.get(Assocontratclient.class, cli.getId());
+          switch (type) {
+              case "edit":
+                  client.setType(cl.getType());
+      client.setIdentite(cl.getIdentite());
+      client.setDelivre(cl.getDelivre());
+     client.setLieuDelivr(cl.getLieuDelivr());
+      client.setNomprenom(cl.getNomprenom());
+      client.setTel(cl.getTel());
+      client.setAdresse(cl.getAdresse());
+      client.setEmail(cl.getEmail());
+      client.setDateNaiss(cl.getDateNaiss());
+      client.setNationalite(cl.getNationalite());
+      client.setLieuNaiss(cl.getLieuNaiss());
+      asscl.setClient(cli.getClient());
+      session.update(client);
+      session.update(asscl);
+         tx.commit();
+      
+                  break ;
+              case "addedit":
+                  asscl.setClient(cli.getClient());
+                  session.save(cl);
+                  session.update(asscl);
+                   tx.commit();
+                  break;
+          }
+      }
+      @Override
+      public void Editcontratsocie (Societe soci , Assocontratsocie so){
+          Transaction tx = session.beginTransaction();
+     Societe sct = (Societe)session.get(Societe.class, soci.getId());
+     Assocontratsocie sc = (Assocontratsocie)session.get(Assocontratsocie.class, so.getId());
+       sct.setNom(soci.getNom());
+       sct.setTel(soci.getTel());
+       sct.setAdresse(soci.getAdresse());
+       sc.setSociete(so.getSociete());
+      session.update(sct);
+      session.update(sc);
+         tx.commit();
+      }
     @Override
     public void Deletecontrat(Integer id_contrat) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

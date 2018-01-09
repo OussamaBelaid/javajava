@@ -64,7 +64,13 @@ public interface Interoperation {
      public void Addcontrat(Contrat contrat , Assocontratvoiture aa );
      public List<Object> listcontrat();
      public List<Object> listarchive();
-     public void Editcontrat (Integer id_contrat);
+     public void Editcontrat (Integer id_contrat , Contrat contr);
+     public void Editcontratvoit (Contrat contr ,Assocontratvoiture assovoi );
+      public void Editcontratpai (Integer id_contrat , Integer id_voit);
+      public void Editcontratconduc1 (Conducteur cond1 , Assocontratconducteur assocond , String type);
+      public void Editcontratconduc2 (Conducteur cond2 , Assocontratconducteur assocond2 , String type);
+      public void Editcontratclient (Client cl ,Assocontratclient cli , String type );
+       public void Editcontratsocie (Societe soci , Assocontratsocie so);
      public void Deletecontrat (Integer id_contrat);
      public void Editfactcontrat (Integer id_contrat);
      public void Deletearchive (Integer id_archive);
